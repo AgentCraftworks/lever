@@ -45,6 +45,8 @@ h2 span{color:var(--mut)}
 .lane div{padding:10px 12px;font-family:'Monaspace Neon',monospace;font-size:15px;line-height:1.45}
 .bars{display:grid;grid-template-columns:330px 1fr 80px;gap:8px 14px;align-items:center;margin:6px 0 12px;font-size:19px}
 .bars i{display:block;height:18px;background:var(--c)}
+.diff{margin:4px 0 14px;font-family:'Monaspace Neon',monospace;font-size:18px;line-height:1.5;background:var(--bg);border-radius:8px;padding:12px 16px}
+.diff span{display:block;white-space:pre}.diff .ctx{color:var(--mut)}.diff .add{background:var(--gp);color:#05601e;margin:0 -16px;padding:0 16px}
 </style>
 </head>
 <body>
@@ -52,26 +54,26 @@ h2 span{color:var(--mut)}
 <!-- 1. /lever -->
 <article class="ex" id="lever" style="--c:var(--li)">
   <div class="hd"><span class="cmd">/lever</span><span class="mode">Front door</span></div>
-  <h2>One command to remember. <span>It picks the skill.</span></h2>
+  <h2>One command, a handful of verbs. <span>Don't know the verb? Say what's wrong.</span></h2>
   <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever</b> our CI is slow and I'm tired of hitting rerun</div></div></div>
   <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
-    <p>That's a <b>Loop</b> problem: you want something that already exists to get measurably better. Running <code>/find-the-loop</code>, then <code>/experiment-arms</code>.</p>
+    <p>That's a <b>Loop</b> problem: something that exists should get measurably better. Running <code>/lever loop</code>, then <code>/lever arms</code>.</p>
     <table class="tbl">
-      <tr><td class="n">Build</td><td>something new, no signal yet</td><td class="n mut">/brief</td></tr>
-      <tr class="hl"><td class="n">Loop</td><td>make an existing thing better</td><td class="n">/find-the-loop</td></tr>
-      <tr><td class="n">Run</td><td>you keep doing it by hand</td><td class="n mut">/automate-it</td></tr>
-      <tr><td class="n">You</td><td>get better at steering agents</td><td class="n mut">/prompt-mirror</td></tr>
+      <tr><td class="n">Build</td><td>make something new</td><td class="n mut">brief · deliver · refactor · shepherd · land</td></tr>
+      <tr class="hl"><td class="n">Loop</td><td>make something better</td><td class="n">loop · arms · review</td></tr>
+      <tr><td class="n">Run</td><td>make it happen without you</td><td class="n mut">automate · health</td></tr>
+      <tr><td class="n">You</td><td>tune lever to how you work</td><td class="n mut">mirror · steer · autonomy · spend</td></tr>
     </table>
-    <p class="mut">Next time you can type <code>/find-the-loop</code> directly.</p>
+    <p class="mut">Next time: <code>/lever loop our CI is slow</code>. All verbs: <code>/lever help</code>.</p>
   </div></div></div>
   <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
 </article>
 
-<!-- 2. /find-the-loop -->
-<article class="ex" id="find-the-loop" style="--c:var(--gl)">
-  <div class="hd"><span class="cmd">/find-the-loop</span><span class="mode">Loop mode</span></div>
+<!-- 2. /lever loop -->
+<article class="ex" id="loop" style="--c:var(--gl)">
+  <div class="hd"><span class="cmd">/lever loop</span><span class="mode">Loop mode</span></div>
   <h2>How would we know it worked? <span>Before touching a single file.</span></h2>
-  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/find-the-loop</b> our CI is slow</div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever loop</b> our CI is slow</div></div></div>
   <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
     <p>Loop Card, <span class="mono">ci-time-to-green</span>. No code changed yet.</p>
     <dl class="kv">
@@ -88,11 +90,11 @@ h2 span{color:var(--mut)}
   <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
 </article>
 
-<!-- 3. /experiment-arms -->
-<article class="ex" id="experiment-arms" style="--c:var(--gl)">
-  <div class="hd"><span class="cmd">/experiment-arms</span><span class="mode">Loop mode</span></div>
+<!-- 3. /lever arms -->
+<article class="ex" id="arms" style="--c:var(--gl)">
+  <div class="hd"><span class="cmd">/lever arms</span><span class="mode">Loop mode</span></div>
   <h2>One agent per idea. <span>Keep what clears the bar. Write down the rest.</span></h2>
-  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/experiment-arms</b> try the 6 ideas on the card</div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever arms</b> try the 6 ideas on the card</div></div></div>
   <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
     <p>6 arms and 1 control, 3 rounds each, same commit. An arm is kept only if it beats control in every round.</p>
     <table class="tbl">
@@ -108,11 +110,11 @@ h2 span{color:var(--mut)}
   <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
 </article>
 
-<!-- 4. /brief -->
+<!-- 4. /lever brief -->
 <article class="ex" id="brief" style="--c:var(--vi)">
-  <div class="hd"><span class="cmd">/brief</span><span class="mode">Build mode</span></div>
+  <div class="hd"><span class="cmd">/lever brief</span><span class="mode">Build mode</span></div>
   <h2>You type 12 words. <span>It writes the brief an agent can run without you.</span></h2>
-  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/brief</b> add offline mode to the editor. ship it by tomorrow</div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever brief</b> add offline mode to the editor. ship it by tomorrow</div></div></div>
   <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
     <dl class="kv">
       <dt>Your words</dt><dd>"add offline mode to the editor. ship it by tomorrow"</dd>
@@ -127,11 +129,11 @@ h2 span{color:var(--mut)}
   <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
 </article>
 
-<!-- 5. /refactor-pipeline -->
-<article class="ex" id="refactor-pipeline" style="--c:var(--ol)">
-  <div class="hd"><span class="cmd">/refactor-pipeline</span><span class="mode">Build mode</span></div>
+<!-- 5. /lever refactor -->
+<article class="ex" id="refactor" style="--c:var(--ol)">
+  <div class="hd"><span class="cmd">/lever refactor</span><span class="mode">Build mode</span></div>
   <h2>Three terminals, one job each. <span>They never talk to each other.</span></h2>
-  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/refactor-pipeline</b> src/core is 400k lines. cut it in half</div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever refactor</b> src/core is 400k lines. cut it in half</div></div></div>
   <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
     <p>Paste one block into each terminal. They coordinate only through the branch and the PR stack.</p>
     <div class="lanes">
@@ -144,11 +146,11 @@ h2 span{color:var(--mut)}
   <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
 </article>
 
-<!-- 6. /pr-shepherd -->
-<article class="ex" id="pr-shepherd" style="--c:var(--or)">
-  <div class="hd"><span class="cmd">/pr-shepherd</span><span class="mode">Work</span></div>
+<!-- 6. /lever shepherd -->
+<article class="ex" id="shepherd" style="--c:var(--or)">
+  <div class="hd"><span class="cmd">/lever shepherd</span><span class="mode">Build mode</span></div>
   <h2>Stop watching CI. <span>It wakes on events and fixes the root cause.</span></h2>
-  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/pr-shepherd</b> keep my stack green till it lands</div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever shepherd</b> keep my stack green till it lands</div></div></div>
   <div class="turn cp"><div class="av"></div><div><p class="who">Copilot · wake 7</p><div class="msg">
     <table class="tbl">
       <tr><td class="n">PR 1</td><td>green, approved</td><td><span class="v keep">READY FOR YOU</span></td></tr>
@@ -161,11 +163,11 @@ h2 span{color:var(--mut)}
   <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
 </article>
 
-<!-- 7. /cross-model-review -->
-<article class="ex" id="cross-model-review" style="--c:var(--vi)">
-  <div class="hd"><span class="cmd">/cross-model-review</span><span class="mode">Work</span></div>
+<!-- 7. /lever review -->
+<article class="ex" id="review" style="--c:var(--vi)">
+  <div class="hd"><span class="cmd">/lever review</span><span class="mode">Loop mode</span></div>
   <h2>Three models, reviewing blind. <span>Only what survives gets posted.</span></h2>
-  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/cross-model-review</b> this PR</div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever review</b> this PR</div></div></div>
   <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
     <div class="bars">
       <span>raw findings, 3 models</span><i style="width:100%;--c:#e3e9e5"></i><span class="mono">11</span>
@@ -178,11 +180,11 @@ h2 span{color:var(--mut)}
   <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
 </article>
 
-<!-- 8. /automate-it -->
-<article class="ex" id="automate-it" style="--c:var(--cy)">
-  <div class="hd"><span class="cmd">/automate-it</span><span class="mode">Run mode</span></div>
+<!-- 8. /lever automate -->
+<article class="ex" id="automate" style="--c:var(--cy)">
+  <div class="hd"><span class="cmd">/lever automate</span><span class="mode">Run mode</span></div>
   <h2>Did it by hand three times? <span>Now it's a Copilot Automation. Paused.</span></h2>
-  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/automate-it</b> make the stack shepherd an automation for this repo</div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever automate</b> make the stack shepherd an automation for this repo</div></div></div>
   <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
     <dl class="kv">
       <dt>Created</dt><dd><code>pr-shepherd</code> · <span class="v drop">PAUSED</span></dd>
@@ -202,11 +204,11 @@ h2 span{color:var(--mut)}
   <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
 </article>
 
-<!-- 9. /prompt-mirror -->
-<article class="ex" id="prompt-mirror" style="--c:var(--pk)">
-  <div class="hd"><span class="cmd">/prompt-mirror</span><span class="mode">You</span></div>
+<!-- 9. /lever mirror -->
+<article class="ex" id="mirror" style="--c:var(--pk)">
+  <div class="hd"><span class="cmd">/lever mirror</span><span class="mode">You</span></div>
   <h2>How do you actually steer agents? <span>Your own sessions know.</span></h2>
-  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/prompt-mirror</b> last 30 days</div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever mirror</b> last 30 days</div></div></div>
   <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
     <p>412 prompts across 61 sessions. Read locally. Nothing left this machine.</p>
     <div class="bars">
@@ -214,18 +216,18 @@ h2 span{color:var(--mut)}
       <span>CI logs pasted by hand</span><i style="width:41%;--c:var(--pk)"></i><span class="mono">22×</span>
       <span>"push, <i style="display:inline;background:none">then</i> verify"</span><i style="width:17%;--c:var(--pk)"></i><span class="mono">9×</span>
     </div>
-    <p>1. You're the status page. Add <code>/progress-contract</code> and it reports when something changes.<br>
+    <p>1. You're the status page. Add <code>/lever status</code> and it reports when something changes.<br>
        2. You're the CI reader. Give it <code>gh run</code> and let it read logs itself.<br>
-       3. Same correction 9 times. That's a rule: <code>/steer-once</code>.</p>
+       3. Same correction 9 times. That's a rule: <code>/lever steer</code>.</p>
   </div></div></div>
   <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
 </article>
 
-<!-- 10. /steer-once -->
-<article class="ex" id="steer-once" style="--c:var(--pk)">
-  <div class="hd"><span class="cmd">/steer-once</span><span class="mode">You</span></div>
+<!-- 10. /lever steer -->
+<article class="ex" id="steer" style="--c:var(--pk)">
+  <div class="hd"><span class="cmd">/lever steer</span><span class="mode">You</span></div>
   <h2>Say it once. <span>It writes the rule, then checks the rule worked.</span></h2>
-  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/steer-once</b> so which bit about push immediately THEN verify did you not understand</div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever steer</b> so which bit about push immediately THEN verify did you not understand</div></div></div>
   <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
     <p>Fair. You've said this 9 times in 3 weeks. The cheapest layer that would have stopped all 9 is an instruction, not a CI check.</p>
     <dl class="kv">
@@ -234,6 +236,33 @@ h2 span{color:var(--mut)}
       <dt>Re-check</dt><dd>in 7 days. Keep if repeats drop to 0; otherwise escalate a layer.</dd>
     </dl>
   </div></div></div>
+  <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
+</article>
+
+<!-- 11. /lever autonomy -->
+<article class="ex" id="autonomy" style="--c:var(--pk)">
+  <div class="hd"><span class="cmd">/lever autonomy</span><span class="mode">You</span></div>
+  <h2>Who merges is your call. <span>Set it once. Turn it up as trust grows.</span></h2>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever autonomy</b></div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
+    <p><b>L2 here</b>: I get PRs green and ready, you land them. The lowest layer wins:</p>
+    <dl class="kv">
+      <dt>You</dt><dd>L2, your default. Your side project is L4.</dd>
+      <dt>This repo</dt><dd>max L4 · <code>.github/workflows/**</code> capped at L2</dd>
+      <dt>GitHub</dt><dd>required checks, no required approval · ceiling L5</dd>
+    </dl>
+  </div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever autonomy</b> agents can merge docs PRs in this repo, nothing else</div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
+    <div class="diff"><span class="ctx">  ~/.copilot/lever.yml</span>
+<span class="ctx">  autonomy:</span>
+<span class="ctx">    repos:</span>
+<span class="add">+     acme/payments:</span>
+<span class="add">+       default: L2</span>
+<span class="add">+       paths: { "docs/**": L4 }</span></div>
+    <p>Docs PRs land themselves once green. Everything else stays with you. Your words go in <code>history</code>. Save?</p>
+  </div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg">yep</div></div></div>
   <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
 </article>
 

@@ -1,5 +1,6 @@
 ---
 name: find-the-loop
+user-invocable: false
 description: Before iterating on a fix, speedup, or quality problem, build the feedback loop first and write it down as a Loop Card that names the outcome, the instrument the agent runs itself, the noise floor, the keep bar and the stop rule. Use when asked to fix, speed up, improve, optimize, hill-climb or "make X better", and whenever you notice a loop smell: the user has pasted two or more screenshots, "still broken" has come up twice, the agent has said "please try it" without running it, someone claims a win from one run, or the human is acting as the instrument.
 ---
 

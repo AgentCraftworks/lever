@@ -1,5 +1,6 @@
 ---
 name: experiment-arms
+user-invocable: false
 description: Runs many single-hypothesis "arms" as do-not-merge PRs, measures each with paired, interleaved runs against a cost-matched control, keeps only the arms that clear a keep bar set in advance, records every negative, and composes the winners into a stack that is re-measured on real traffic after merge. Use when asked to "make <metric> faster/cheaper/more reliable", "which of these ideas actually helps?", "is this change worth it?", "try that tip I saw", or for any CI, perf, eval, benchmark or cost hill-climb where the system can be run on demand.
 ---
 

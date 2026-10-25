@@ -15,13 +15,30 @@ Every lever skill and automation acts at an **autonomy level**. Each level sets 
 | **L4** | Self-merge behind gates | `gh pr merge --squash --match-head-commit <sha>`, or enqueue / auto-merge. Never `--admin`. If a hook or ruleset blocks, report; don't retry around it. | L2 evidence + ruleset satisfied + no diff in sensitive paths + dependency order respected. |
 | **L5** | Land, release, observe | L4 + deploy or release + watch health signals; roll back or stop on regression. | L4 evidence + health window + rollback plan + stop conditions. |
 
+## Your dial
+
+Your level is personal state, not a per-prompt incantation. It lives in `~/.copilot/lever.yml` ([example](../config/personal.example.yml)), follows you across repos, and you tune it as trust grows:
+
+```text
+/lever autonomy                     # what's the level here, and why?
+/lever autonomy L3                  # my default
+/lever autonomy L4 here             # this repo
+/lever autonomy agents can merge docs PRs in this repo, nothing else
+```
+
+Plain words are translated into a YAML change, shown to you, and written after one yes. Every change is appended to `history:` in your words, so six months from now you can see how your trust moved, and why.
+
 ## How the level is resolved
 
-1. **Repo ceiling.** Read from GitHub, never hard-coded: rulesets, branch protection, required approvals, CODEOWNERS, merge queue. If required approvals or code-owner review cannot be satisfied by the agent's identity, the ceiling is L2. With a merge queue, L4 means "enqueue".
-2. **Repo config (optional).** `.github/lever.yml` can lower the ceiling per path or grant classes. See [`config/autonomy.example.yml`](../config/autonomy.example.yml).
-3. **Automation parameter.** `autonomy: L0..L5` in an automation's PARAMETERS block. New automations start paused, at L0.
-4. **Kickoff question, asked once.** For example: "Who lands this: me (hand-off), you when green, or you plus release?" Skip it if the prompt already answered ("then merge", "hand off to the owning team").
-5. **Live operator.** A message from the operator can raise the level up to the ceiling, or lower it, at any time.
+Three layers. The lowest one wins.
+
+1. **You.** Your dial for this repo (and path), else your default. A run can ask for a different level in its own words, and a live message from you can raise or lower it at any time.
+2. **The repo.** `.github/lever.yml` ([example](../config/autonomy.example.yml)) is the team's layer: a `default` for people with no dial, a `max` no personal dial can exceed, per-path caps, standing class grants and a freeze switch. It changes by PR, never from a chat.
+3. **GitHub.** Rulesets, branch protection, required approvals, CODEOWNERS and the merge queue, read live and never hard-coded. If required approvals or code-owner review can't be satisfied by the agent's identity, the ceiling is L2. With a merge queue, L4 means "enqueue".
+
+Automations have no "you" layer. They use `autonomy: L0..L5` in their PARAMETERS block, start paused at L0, and are still capped by the repo and GitHub.
+
+If nothing says who lands the work, the agent asks once: "Who lands this: me (hand-off), you when green, or you plus release?" It skips the question if the prompt already answered ("then merge", "hand off to the owning team"), and offers to save your answer as your dial.
 
 Rules:
 - Child agents and sub-lanes inherit the level and **can only narrow** it.

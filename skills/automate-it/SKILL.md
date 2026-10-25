@@ -1,5 +1,6 @@
 ---
 name: automate-it
+user-invocable: false
 description: Turns a task you keep doing by hand into a paused GitHub Copilot Automation with an event trigger, a least-privilege tool list, a PARAMETERS + CONTRACT prompt, a quiet exit and a propose-only improver sibling. Use when the same task has been done 3 or more times by hand, a local self-wake has fired 5 or more times for the same job, or the user says "automate this", "run this on every PR/issue", "do this nightly" or "make this run in the cloud".
 ---
 

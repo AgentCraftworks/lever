@@ -1,5 +1,6 @@
 ---
 name: pr-shepherd
+user-invocable: false
 description: Drives an open pull request to landed through an event-driven loop. On each wake it does one batched read, fixes root causes of red required checks, dispositions every review thread, and lands at the level set by the autonomy dial. Use when someone says "monitor CI until green", "push fixes until green", "resolve the review threads", "merge when green", "babysit this PR", "shepherd #123", or when a PR is labeled for shepherding.
 ---
 

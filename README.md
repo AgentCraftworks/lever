@@ -18,9 +18,9 @@ Not everything is a loop. lever works in three [modes](docs/modes.md), and most 
 
 | Mode | When | Start with |
 |---|---|---|
-| **Build** | Something big and new, with no signal to climb yet. File issues, run independent sessions in parallel, merge, deploy, repeat. | `brief` → `autonomous-delivery` |
-| **Loop** | Make an existing thing measurably better. | `find-the-loop` → `experiment-arms` |
-| **Run** | Repeatable work that should happen without you. | `automate-it` |
+| **Build** | Something big and new, with no signal to climb yet. File issues, run independent sessions in parallel, merge, deploy, repeat. | `/lever brief` → `/lever deliver` |
+| **Loop** | Make an existing thing measurably better. | `/lever loop` → `/lever arms` |
+| **Run** | Repeatable work that should happen without you. | `/lever automate` |
 
 Two dials apply to every mode: **[autonomy](docs/autonomy.md)** (how much agents may do on their own) and **[spend](docs/spend.md)** (how many tokens and how much compute you'll pay for: `lean`, `standard` or `max`).
 
@@ -34,7 +34,7 @@ Two dials apply to every mode: **[autonomy](docs/autonomy.md)** (how much agents
 | **The repo, in the cloud**: does repeatable work happen without you, and improve itself? | [`automate-it`](skills/automate-it/) | [`automations/`](automations/) · [`keep-the-pool-full`](skills/keep-the-pool-full/) · [`run-health-review`](skills/run-health-review/) |
 
 Shared by every skill:
-- **[Autonomy dial](docs/autonomy.md)** (L0 propose → L5 land, release, observe). How much an agent may do on its own is *your setting*, capped by your repo's own rules. It is never hard-coded.
+- **[Autonomy dial](docs/autonomy.md)** (L0 propose → L5 land, release, observe). How much an agent may do on its own is *your setting*, saved in `~/.copilot/lever.yml` and tuned with `/lever autonomy` as your trust grows. It's capped by your repo's own rules and never hard-coded.
 - **[Spend dial](docs/spend.md)** (`lean` · `standard` · `max`): model tier, parallel lanes, review depth and trigger cadence, with order-of-magnitude costs.
 - **[Loop Card](templates/loop-card.md)**: outcome, metric, instrument, noise floor, keep bar, stop rule.
 - **[Ledger](templates/ledger.md)**: every attempt is recorded, including rejects.
@@ -42,36 +42,68 @@ Shared by every skill:
 
 ## Start here
 
-Don't know which skill you want? Type **`/lever`** and describe the problem. It picks the mode and the skill, says which in one line, and runs it. Next time you can type that skill directly.
+One command: **`/lever`**. Give it a verb, or just say what's wrong and it picks the verb, tells you which, and runs it.
 
-1. **Stuck, or iterating by feel?** Run `find-the-loop`. It turns "it still feels slow" into a metric the agent can measure itself.
-2. **Handing off work?** Run `brief`. It turns your 20-word ask into something an agent can run unattended, with a done-when, a budget, and an autonomy level.
-3. **Doing the same thing for the third time?** Run `automate-it`. It turns it into a Copilot Automation that starts paused, uses least-privilege tools, and comes with an improver that proposes fixes for you to approve.
-4. **Want lever to fit *you*?** Run `prompt-mirror` on your own session history, then `steer-once` to turn your repeated corrections into instructions that stick.
+1. **Stuck, or iterating by feel?** `/lever loop`. It turns "it still feels slow" into a metric the agent can measure itself.
+2. **Handing off work?** `/lever brief`. It turns your 20-word ask into something an agent can run unattended, with a done-when, a budget, and an autonomy level.
+3. **Doing the same thing for the third time?** `/lever automate`. It turns it into a Copilot Automation that starts paused, uses least-privilege tools, and comes with an improver that proposes fixes for you to approve.
+4. **Want lever to fit *you*?** `/lever setup` sets your dials. `/lever mirror` reads your own session history, and `/lever steer` turns your repeated corrections into rules that stick.
+
+## Commands
+
+```text
+/lever <what's bugging you>      not sure? describe it. lever picks the verb.
+
+BUILD   make something new
+  brief <ask>                    turn ~20 words into a brief an agent can run unattended
+  deliver [brief|issues]         run lanes in parallel and land the work
+  refactor <scope> <goal>        huge mechanical change: producer, packager, shepherd
+  backlog                        keep enough ready issues in the pool
+  shepherd [pr|stack]            keep PRs green until they land
+  land [prs]                     merge plan for a stack or a batch
+  status                         progress you never have to ask for
+
+LOOP    make something measurably better
+  loop <problem>                 find the feedback loop first: a Loop Card
+  arms [ideas]                   one agent per idea, against a control
+  review [pr|plan]               several models, blind; only agreed findings
+
+RUN     make it happen without you
+  automate <task>                turn a chore into a paused Copilot Automation
+  health                         why did it stall? one fix, or "no change"
+
+YOU     tune lever to how you work
+  mirror [30d]                   a scorecard of how you prompt, from your sessions
+  steer <correction>             say it once, never again
+  autonomy [L0-L5|<words>]       who merges. see or set your dial
+  spend [lean|standard|max]      how much model to throw at it
+  setup                          first run: set your dials
+  help [verb]                    this list, or one verb in detail
+```
+
+Each verb is a skill in [`skills/`](skills/). The `/` menu shows only `/lever`. The rest stay out of the way, and Copilot still loads them on its own when your ask fits.
 
 ## Try it
 
-In Copilot CLI or the app, a skill is a slash command: `/<skill> <what you want, in your own words>`.
-
 ```text
 /lever our CI is slow and I'm tired of hitting rerun
-/find-the-loop the editor feels janky when I scroll big files
-/experiment-arms try the 6 ideas on the card
-/brief add offline mode to the editor. ship it by tomorrow
-/refactor-pipeline src/core is 400k lines. cut it in half
-/pr-shepherd keep my stack green till it lands
-/cross-model-review this PR
-/automate-it make the stack shepherd an automation for this repo
-/prompt-mirror last 30 days
-/steer-once push immediately, then verify
-/autonomy-dial agents can merge docs PRs in this repo, nothing else
+/lever loop the editor feels janky when I scroll big files
+/lever arms try the 6 ideas on the card
+/lever brief add offline mode to the editor. ship it by tomorrow
+/lever refactor src/core is 400k lines. cut it in half
+/lever shepherd keep my stack green till it lands
+/lever review this PR
+/lever automate make the stack shepherd an automation for this repo
+/lever mirror last 30 days
+/lever steer push immediately, then verify
+/lever autonomy agents can merge docs PRs in this repo, nothing else
 ```
 
-![/lever routes a plain-words ask to the right skill](docs/examples/lever.png)
+![/lever routes a plain-words ask to the right verb](docs/examples/lever.png)
 
-![/find-the-loop writes a Loop Card before touching code](docs/examples/find-the-loop.png)
+![/lever autonomy shows and sets your dial](docs/examples/autonomy.png)
 
-More in the **[examples gallery](docs/examples.md)**: experiment arms, a brief, the three-terminal refactor, the PR shepherd, cross-model review, an automation and the two "You" skills.
+More in the **[examples gallery](docs/examples.md)**: a Loop Card, experiment arms, a brief, the three-terminal refactor, the PR shepherd, cross-model review, an automation and the "You" verbs.
 
 ## Install
 
@@ -84,7 +116,7 @@ ln -s ~/.copilot/lever/skills/* ~/.copilot/skills/
 mkdir -p .github/skills && cp -r path/to/lever/skills/find-the-loop .github/skills/
 ```
 
-Optional: copy [`config/autonomy.example.yml`](config/autonomy.example.yml) to `.github/lever.yml` to set autonomy levels and budgets for a repo.
+Then run `/lever setup`. It asks three questions and writes your dials to `~/.copilot/lever.yml` ([example](config/personal.example.yml)). For a team, copy [`config/autonomy.example.yml`](config/autonomy.example.yml) to `.github/lever.yml` to cap levels and set budgets for the repo.
 
 Automation recipes in [`automations/`](automations/) are installed through the GitHub MCP server (`create_automation`). Each one is created paused, dry-run on historical items, then enabled.
 

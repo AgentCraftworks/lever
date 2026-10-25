@@ -1,5 +1,6 @@
 ---
 name: run-health-review
+user-invocable: false
 description: Stall watchdog and automation health review. Pulls recent runs, merges, no-op rate, failures, rate-limit hits and stuck PRs; classifies each stall; proposes exactly one change or "no change"; and takes over orphaned work. Use when unattended delivery stalled ("why did it stall overnight", "no merges in N hours", "it was fast the first few days, now slow"), when an automation fails or its output drops, when rate limits or quotas are hit, or on a schedule while agents run unattended.
 ---
 

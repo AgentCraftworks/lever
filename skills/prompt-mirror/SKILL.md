@@ -1,5 +1,6 @@
 ---
 name: prompt-mirror
+user-invocable: false
 description: Privately mine your own local Copilot session history and return a scorecard of how you direct agents, plus three suggestions illustrated with your own before/after messages. Use when the user asks "how am I prompting?", "coach me", "mine my sessions", "what do I keep repeating?", wants a weekly self-retro, or after a frustrating run.
 ---
 

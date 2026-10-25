@@ -1,5 +1,6 @@
 ---
 name: keep-the-pool-full
+user-invocable: false
 description: Backlog steward that keeps a pool of ready, independently mergeable issues above a target by mining real sources (failing tests, TODOs, gaps, audits, user reports), deduplicating, sizing and labeling them ready. Use when unattended agents run out of work, the ready pool drops below its target, the user says "file more issues", "keep them busy", "fill the backlog" or "we have nothing to do", or on a daily schedule while a delivery loop is running.
 ---
 

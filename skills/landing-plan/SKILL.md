@@ -1,5 +1,6 @@
 ---
 name: landing-plan
+user-invocable: false
 description: Turns a set of open PRs into a merge plan. It maps their dependencies, puts the PRs into merge-queue batches with strict order only where they overlap, and writes a hand-off with evidence for each PR. At L2 it gives the plan to the human who will merge; at L4 it enqueues the PRs itself. Use when a stack or batch of agent PRs is ready to land, when someone asks "what order should these merge in", "hand this off", "land the stack", or "why is landing taking all day", or before an owner starts merging PRs one at a time.
 ---
 

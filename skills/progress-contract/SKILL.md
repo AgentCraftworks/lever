@@ -1,5 +1,6 @@
 ---
 name: progress-contract
+user-invocable: false
 description: Pushes progress on long-running or delegated work so the human never has to poll. It publishes milestones with ETAs and the evidence each needs, sends reports only when something meaningful changed, labels every claim with an evidence level, logs ETA accuracy, watches time since last merge, and audits "done" against evidence before declaring it. Use for any delegated, multi-hour or overnight run, when a brief sets a report contract, or when the user asks "status?", "ETA?", "where are we?", "what happened overnight?", "hour by hour" or "are you done?".
 ---
 

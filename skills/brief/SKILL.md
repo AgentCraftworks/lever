@@ -1,5 +1,6 @@
 ---
 name: brief
+user-invocable: false
 description: Turns a short intent, often around 20 words, into a brief that can run unattended. The brief has the user's words verbatim, an outcome owner, an observable done-when, a feedback loop, constraints and neighbors, a budget, an autonomy level, an absence window, stop conditions and a report contract. Use when delegating to a child session, background agent, cloud agent or scheduled run, when fanning out, or when the user says "kick off", "spin up", "hand this to", "in parallel", "while I'm asleep", "keep going" or "I'll be away".
 ---
 

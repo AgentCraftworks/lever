@@ -2,7 +2,7 @@
 
 Illustrative exchanges, abbreviated. The numbers are made up; the shapes are real. Each card is one command and roughly what comes back.
 
-Invoke any skill as `/<skill> <your ask>`. If you don't know which one, use `/lever <your ask>`.
+Everything is `/lever <verb> <your ask>`. Don't know the verb? `/lever <your ask>`.
 
 ## Front door
 
@@ -10,31 +10,33 @@ Invoke any skill as `/<skill> <your ask>`. If you don't know which one, use `/le
 
 ## Loop: make an existing thing measurably better
 
-![/find-the-loop](examples/find-the-loop.png)
+![/lever loop](examples/loop.png)
 
-![/experiment-arms](examples/experiment-arms.png)
+![/lever arms](examples/arms.png)
+
+![/lever review](examples/review.png)
 
 ## Build: something new, no signal yet
 
-![/brief](examples/brief.png)
+![/lever brief](examples/brief.png)
 
-![/refactor-pipeline](examples/refactor-pipeline.png)
+![/lever refactor](examples/refactor.png)
 
-## Getting work landed
+## Build: getting work landed
 
-![/pr-shepherd](examples/pr-shepherd.png)
-
-![/cross-model-review](examples/cross-model-review.png)
+![/lever shepherd](examples/shepherd.png)
 
 ## Run: work that should happen without you
 
-![/automate-it](examples/automate-it.png)
+![/lever automate](examples/automate.png)
 
-## You: get better at steering agents
+## You: tune lever to how you work
 
-![/prompt-mirror](examples/prompt-mirror.png)
+![/lever mirror](examples/mirror.png)
 
-![/steer-once](examples/steer-once.png)
+![/lever steer](examples/steer.png)
+
+![/lever autonomy](examples/autonomy.png)
 
 ---
 

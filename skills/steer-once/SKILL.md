@@ -1,6 +1,7 @@
 ---
 name: steer-once
-description: Turn a correction you keep repeating into a durable fix: mine your corrections, classify them, choose the cheapest layer that would have prevented them (instruction, skill, lint/CI check, test, automation, or product bug report), open a PR with an evidence block, then re-measure after K days and keep, escalate or revert. Use when the user says "again", "I told you", "why do I keep telling you X", "didn't I give you a skill for this", "mine my corrections", "/steer-once", or when prompt-mirror reports the same correction class in 3+ sessions.
+user-invocable: false
+description: Turn a correction you keep repeating into a durable fix: mine your corrections, classify them, choose the cheapest layer that would have prevented them (instruction, skill, lint/CI check, test, automation, or product bug report), open a PR with an evidence block, then re-measure after K days and keep, escalate or revert. Use when the user says "again", "I told you", "why do I keep telling you X", "didn't I give you a skill for this", "mine my corrections", "/lever steer", or when prompt-mirror reports the same correction class in 3+ sessions.
 ---
 
 # steer-once

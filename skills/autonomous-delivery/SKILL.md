@@ -1,5 +1,6 @@
 ---
 name: autonomous-delivery
+user-invocable: false
 description: Runs long-lived delivery as a coordinator with parallel lanes. Sets authority and pacing dials up front, keeps lanes alive and fed, lands work through a single-writer release train, and reports status only when something changed. Use for multi-hour, overnight or ongoing "keep going" work, for work with more than about three independent streams, for "/autonomous-delivery", "run this overnight", "keep N streams going", "don't stop until it ships", or to re-arm an existing run after a restart.
 ---
 

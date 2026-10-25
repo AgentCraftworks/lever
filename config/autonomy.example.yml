@@ -1,8 +1,11 @@
 # Copy to .github/lever.yml in your repo. Everything is optional.
+# This is the team's layer. Each person's own dial lives in
+# ~/.copilot/lever.yml (see personal.example.yml) and is capped by this file.
 # The effective level can never exceed the ceiling GitHub enforces
 # (rulesets, required approvals, CODEOWNERS, merge queue).
 autonomy:
-  default: L2               # L0 propose · L1 draft · L2 ready/human lands · L3 grant · L4 gated self-merge · L5 release
+  default: L2               # used when the person has no dial for this repo. L0 propose · L1 draft · L2 ready/human lands · L3 grant · L4 gated self-merge · L5 release
+  max: L4                   # nobody's personal dial goes above this here
   paths:                    # lower the level for sensitive paths
     ".github/workflows/**": L2
     "**/migrations/**": L2

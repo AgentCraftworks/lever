@@ -1,5 +1,6 @@
 ---
 name: cross-model-review
+user-invocable: false
 description: Reviews a PR, diff, plan or skill with 2–3 models from different providers working blind and independently, and surfaces only the findings they agree on or that survive a contradiction-first proof; a precision mode runs one automated reviewer that posts at most two proven findings and stays silent otherwise. Use when asked to "review this with opus, codex and gemini", "rubber duck this plan", "second opinion", "only show me issues the models agree on", when a plan is about to drive a day or more of work, when work has been stuck for hours, or when setting up review-on-ready automation.
 ---
 

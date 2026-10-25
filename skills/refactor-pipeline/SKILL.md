@@ -1,5 +1,6 @@
 ---
 name: refactor-pipeline
+user-invocable: false
 description: Runs a huge, mechanical refactor (crate or package splits, module extraction, API migrations, dead-code removal) as three independent lanes, producer, packager and shepherd, that coordinate only through git and a PR stack. Use when someone says "split this crate", "break up this monolith", "this module is huge, cut it down", "migrate every caller", or when a refactor is too big to review as one PR and too tedious to babysit.
 ---
 
