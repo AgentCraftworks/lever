@@ -36,7 +36,8 @@ Repeatable work belongs in the cloud, on an event, with nobody babysitting it. T
 10. **Dry-run on 3 historical items.** Set `MODE: dry_run` in PARAMETERS, then either run the same prompt and tools in a local session (parity: manual and automated runs should be the same thing), or call `run_automation` with `resource_url` set to each historical item. `run_automation` is a real run, so for a strict dry run temporarily submit a read-only tool list, then restore the full list. Pick one item that should ACT, one that should NOOP and one edge case. Show the user the three records.
 11. **Enable on approval.** Ask once, with the dry-run records attached. Then `update_automation` with `disabled: false` and `MODE: act`. Don't ask again for permission you already have (see [autonomy](../../docs/autonomy.md)).
 12. **Pair with an improver sibling.** Create it from [automations/improver](../../automations/improver/README.md), also paused. Optionally group both with `create_automation_group` and `add_automation_to_group`.
-13. **Hand off.** Report the automation id, revision number, model tier and why, how to pause it, where its records live, and the metric's baseline.
+13. **Qualify before you trust it.** Treat the automation as migrated only once it has produced real outputs *and* kept picking up work from events, with no local prompting, over an agreed window (for example a week). Stop any local job doing the same work so the two never compete. One good run isn't a migration.
+14. **Hand off.** Report the automation id, revision number, model tier and why, how to pause it, where its records live, and the metric's baseline.
 
 ## Dials
 

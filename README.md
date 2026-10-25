@@ -8,6 +8,10 @@ lever is a set of [agent skills](https://docs.github.com/copilot) for GitHub Cop
 
 The lesson behind most of them: the biggest wins came from **building a trustworthy feedback loop first** and then letting agents iterate against it. The biggest wastes came when the human *was* the loop: pasting screenshots, eyeballing frame rates, watching CI overnight, hand-editing an automation's prompt.
 
+## Where it came from
+
+lever grew out of the [autonomous-delivery skill](https://gist.github.com/EvanBoyle/8c1a97f682d92dab8c09d0e1ea73f4a0): a coordinator that keeps parallel work moving, lands it and keeps improving how it's organized. Running that skill for weeks showed which parts really carried the weight. Those parts are now the separate skills here: the loop, the brief, the dial, the status contract, the review, and moving lanes into the cloud. [`autonomous-delivery`](skills/autonomous-delivery/) is still the top-level orchestrator that ties them together.
+
 ## Lower the floor, raise the ceiling
 
 | Loop | Floor: anyone, day one | Ceiling: unattended, at scale |

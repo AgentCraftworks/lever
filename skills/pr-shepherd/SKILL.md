@@ -34,7 +34,7 @@ You can run it locally (a session with a self-wake or session automation) or in 
    - **Unrelated and known flaky.** Rerun only the failed jobs, once (`gh run rerun <run-id> --failed`). If the rerun passes, record a flake: open or update **one** issue per test (search first to avoid duplicates) with the run links. If it fails again, treat it as real.
    - **Infrastructure** (runner, quota, outage). Rerun once. If it's still red, end with `BLOCKED(infra)` and link the evidence.
    - **Never** do any of these: skip or delete tests, add `continue-on-error` or `|| true`, lower coverage or lint thresholds, add a suppression without a linked issue, mark a check non-required, rerun until lucky, or use `--admin`. If the only path to green weakens a check, end with `BLOCKED(needs-decision)`.
-6. **Disposition every thread.** Every unresolved, non-outdated thread ends in exactly one state:
+6. **Disposition every thread.** No PR needs a human approval by default, but every thread ends resolved. Every unresolved, non-outdated thread ends in exactly one state:
    - **fixed:** push the change, reply with the commit link, then resolve the thread (if `resolve_policy` allows).
    - **replied:** answer the question, or decline with a concrete reason ("out of scope; filed #N", "intentional because…"). Then resolve it or leave it for the reviewer, per `resolve_policy`.
    - **blocked:** the thread needs a human decision. Reply with the question and the options once, then move on.
@@ -63,7 +63,7 @@ You can run it locally (a session with a self-wake or session automation) or in 
 | `update_strategy` | Follow the repo's convention; merge base if none | merge, rebase |
 | `flake_policy` | `rerun_once_then_file` | `rerun_once`, `rerun_once_then_file`, `never_rerun` |
 | `max_fix_pushes` | 3 per PR | integer; after this, `BLOCKED` |
-| `resolve_policy` | Resolve threads you fixed; leave declined ones for the reviewer | resolve all once dispositioned / reviewer resolves all |
+| `resolve_policy` | **Resolve every thread once dispositioned**: fixed, or declined with a reason | resolve only fixed threads / reviewer resolves all |
 | `review_bot_wait` | 0 | minutes after the last push before landing (e.g. 5) |
 | `max_logs_per_wake` | 5 | integer |
 | `api_budget` | ≤10 calls per wake; ≤75 REST calls per merged PR (`config/autonomy.example.yml`) | integers; on 403/429, back off until `resetAt` |

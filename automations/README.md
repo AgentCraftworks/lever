@@ -14,6 +14,7 @@ Use [`automate-it`](../skills/automate-it/SKILL.md) to decide whether something 
 | [repro-gate](repro-gate/) (+ improver) | Classifies new issues; `repro-confirmed` only with a test it wrote that fails | issue opened, `needs-repro` label, daily sweep | test branch, comment, labels | Confirmed labels a human kept / applied |
 | [morning-brief](morning-brief/) | Daily focus brief: new issues, PRs waiting on you, main CI, top 3 | daily interval | one comment on a digest issue | Focus items acted on within 24 h |
 | [automation-health](automation-health/) | Weekly review of all automations: no-op %, failures, cost per useful output, least-privilege lint; one change or none | weekly interval, `automation_failed` | report comment, one issue per repeated failure, proposals | Cost per useful output |
+| [ci-speed](ci-speed/) | Continuous CI speed lane: a cheap daily watch files one goal issue when time-to-green misses target; the goal wakes a capped experiment-arms lane that hands owners a measured stack and re-measures after merge | daily interval; `issues` labeled `ci-goal` | goal issue, do-not-merge arms, PR stack with evidence | p90 time-to-green |
 | [improver](improver/) | Generic sibling for any worker: reads outcomes, proposes one revision, never applies it | weekly interval, `automation_failed` | `propose_automation_update` only | The worker's metric, per revision |
 
 Each recipe folder has a `README.md` (purpose, triggers, least-privilege tools, dials, outcome metric, install steps) and a `prompt.md` you can paste as-is after filling in PARAMETERS. The two recipes with dedicated improvers also have an `improver-prompt.md`.
@@ -42,6 +43,7 @@ If you're starting from nothing:
 3. **pr-shepherd** at L2 on a few opted-in PRs.
 4. **precision-review** and **repro-gate**, each with its improver created paused, enabled after about 20 outputs.
 5. **automation-health**, once you have three or more automations to compare.
+6. **ci-speed**, once you have a manual time-to-green baseline.
 
 ## Not here yet
 
@@ -49,7 +51,6 @@ These come up often enough to be worth building with `automate-it`:
 
 - **Backlog steward**: keeps a queue of well-formed, ready issues for agents to pick up. See [`keep-the-pool-full`](../skills/keep-the-pool-full/SKILL.md) for the contract; run it on a daily interval.
 - **Merge-conflict fixer**: `pull_request_merge_conflict` with a label filter; updates from base and pushes, or explains both sides' intent.
-- **CI time-to-green watch**: a nightly interval that tracks median time to green on the default branch and opens one issue when it regresses.
 - **Stall watchdog**: an hourly sweep that alerts when nothing has merged for longer than your threshold. See [`run-health-review`](../skills/run-health-review/SKILL.md).
 
 ## Known API gaps

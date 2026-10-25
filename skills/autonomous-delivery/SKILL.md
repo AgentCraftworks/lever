@@ -5,9 +5,11 @@ description: Runs long-lived delivery as a coordinator with parallel lanes. Sets
 
 # Autonomous delivery (v3)
 
-**Organize the work, keep it moving, and keep improving how it is organized.** A coordinator holds your intent, splits it into lanes, and delegates each lane to a child session that owns an outcome. Children may run their own workers. The coordinator optimizes for **verified outcomes per hour**, not agent activity. Quality and throughput are joint goals, and you never buy speed by weakening the outcome.
+**Organize the work, keep it moving, and keep improving how it is organized.** A coordinator holds your intent, splits it into lanes, and delegates each lane to a child session that owns an outcome. Children may run their own workers. The coordinator optimizes for **verified outcomes per hour**, not agent activity. Quality and throughput are joint goals, and you never buy speed by weakening the outcome. For a delivery mandate, the outcome is **working behavior observed on the real path**, not source code or an open PR.
 
-Version 3 keeps the adaptive orchestrator-worker pattern from v2.1 and adds the rules that weeks of real unattended runs forced into existence. Dials are set up front. Stalled children are restarted automatically. The watchdog metric is time since last merge. Wakes with nothing new stay silent. A stuck lane gets re-planned after two hours. Releases have one writer. The backlog never runs dry. Constraints that agents invent come with a source and an expiry.
+A skill is not authorization. But existing delegation *is* authority within its scope, and it doesn't need to be requested again at every step.
+
+Version 3 builds on the [public autonomous-delivery skill, v2.1](https://gist.github.com/EvanBoyle/8c1a97f682d92dab8c09d0e1ea73f4a0) (MIT). It keeps the adaptive orchestrator-worker pattern and adds the rules that weeks of real unattended runs forced into existence. Dials are set up front. Stalled children are restarted automatically. The watchdog metric is time since last merge. Wakes with nothing new stay silent. A stuck lane gets re-planned after two hours. Releases have one writer. The backlog never runs dry. Constraints that agents invent come with a source and an expiry.
 
 Worked examples, templates and the full list of changes since v2.1 are in [`reference.md`](reference.md).
 
@@ -23,6 +25,13 @@ Worked examples, templates and the full list of changes since v2.1 are in [`refe
 - Turning an intent into a brief. Use [`brief`](../brief/SKILL.md) first and hand the result to this skill.
 
 ## Steps
+
+### 0. Start from intent and current state (every session, and after long gaps)
+
+Long-running coordinators fall behind. At session start and after any long gap:
+- Refresh from the remote default branch and **re-read this skill** and the repo's runbooks, so you don't act on stale rules.
+- Read the live state before acting: open issues and PRs, their discussion, existing owners, and what is actually deployed.
+- Separate requirements from assumptions. An old checkout, a historical receipt or an idle session does not change the user's delegation.
 
 ### 1. Setup interview (once)
 
@@ -51,6 +60,12 @@ The autonomy level is resolved per [`docs/autonomy.md`](../../docs/autonomy.md).
 4. Set the merge order up front: foundation first, leaves last, smallest reviewable PRs. Use [`landing-plan`](../landing-plan/SKILL.md) for batches.
 5. A markdown plan is enough. Append superseding direction instead of rewriting history. Reconcile the graph after each batch.
 
+**Fit the organization to the work.** A small fix or one tightly coupled investigation stays with one worker. Independent outcomes get separate owners. A large domain can get its own orchestrator when its local decisions would overload you. `max_lanes` is a cap, not a quota. Don't create agents to review each other just to satisfy process, and collapse layers that only relay messages.
+
+**Parallel by default.** When the user raises a new outcome mid-stream, start a new dedicated owner for it right away and keep current work moving. Don't queue independent investigations, fixes or experiments behind a release or another lane unless they really share a resource. The user should never have to say "in parallel".
+
+**Claim before you write.** Find or create a tracking issue for each outcome. Check assignees, linked PRs and active sessions before claiming. Assignment is not an atomic lock: if two owners claim the same thing, reconcile instead of starting a second writer.
+
 ### 3. Delegate with an envelope
 
 Each child gets a standalone brief ([`templates/brief.md`](../../templates/brief.md); see the envelope in [`reference.md`](reference.md)) with the user's words verbatim, the outcome and its done-when, the feedback loop, the files it owns, its slice of the shared budget, and the inherited autonomy level. Its **escalation target is the parent, not the human**, and it runs in autopilot, never waiting on a human prompt.
@@ -69,6 +84,15 @@ constraint | source (operator | repo | platform | agent:<lane>) | set | expires 
 
 Model choice: give the coordinator strong reasoning, give well-scoped implementation fast capable workers, and save the strongest reasoning for hard diagnosis and stuck lanes. Respect your stated model preferences.
 
+### 3a. Each lane runs the shortest evidence-driven loop
+
+Start from a concrete hypothesis. Inspect the evidence, make the smallest coherent change, run focused checks and the required CI, land at the resolved level, exercise the real path, inspect the result, and iterate.
+
+- **Keep verification proportionate.** For behavior changes, run focused tests, the required CI and a bounded real-path smoke test. For docs-only changes, check sources, links and consistency, plus required CI; don't redeploy. Don't make exhaustive scans, unchanged reruns or new verification machinery a prerequisite. Broaden only when the evidence demands it, and say what each check does and doesn't prove.
+- **Check the diagnosis against raw evidence** before acting on it, and confirm a measurement script counts what it claims to.
+- **Reproduce off production** before spending live attempts. A default-off flag in source may never have been turned on in the live system, so read the live configuration.
+- **Treat a deploy as an experiment.** After a release or a flag flip, compare load, latency and error rates against the pre-change baseline right away. Roll back or adjust quickly when they regress.
+
 ### 4. Run the loop: events first, a sweep as backstop, silent when nothing changed
 
 Handle child completions and GitHub events as they arrive: reconcile, unblock, route each merged SHA to the release owner, and start the next ready lane. When the sweep fires (`sweep_interval`), check:
@@ -79,17 +103,20 @@ Handle child completions and GitHub events as they arrive: reconcile, unblock, r
 4. **Lane count below the minimum.** Refill (step 6).
 5. **Budget burn.** Check API calls, CI minutes and credits against their caps.
 
+Keep one short current-state checkpoint per lane: owner, outcome, evidence, blocker, next action. Store historical receipts separately; they are evidence, not current restrictions. Don't re-read unchanged ledgers, and don't ask owners for generic status when no decision depends on it. Busy doesn't prove progress, silence doesn't prove a stall, and idle doesn't mean complete or safe to archive.
+
 If nothing changed since the last watermark, end the wake silently: no message, and no task invented to justify the wake. Never sleep or poll inside a turn. Give the waiting agent other work instead.
 
 ### 5. Land and release on a train
 
-Per-PR landing belongs to `pr-shepherd`, at the resolved level. At L5, **one release-owner lane is the only writer of releases**. Other lanes send it merged SHAs. The release owner:
-- batches everything qualified since the last release;
+Per-PR landing belongs to `pr-shepherd`, at the resolved level. **After a merge, release and the next implementation run in parallel**: hand the exact merged SHA to the release owner and pick up the next ready work immediately. Don't serialize the team behind deployment, and don't create a second deployer. At L5, **one release-owner lane is the only writer of releases**. Other lanes send it merged SHAs. The release owner:
+- ships the latest default-branch head whose **post-merge CI** is green (PR CI isn't enough), batching everything merged since the last release, not one release per PR;
+- records any change between the selected target and a newer head, rather than silently swapping targets;
 - deploys;
 - runs a post-deploy check against a baseline;
 - rolls back on regression.
 
-Use expand → migrate → contract for format changes. Use maintenance windows only for breaking changes or data migrations. Report merge→production latency.
+Never redeploy unchanged source just to look busy, and never waive CI or compatibility checks to simulate continuous deployment. Use expand → migrate → contract for format changes. Use maintenance windows only for breaking changes or data migrations. Report merge→production latency.
 
 ### 6. Never idle (when `idle_policy = refill`)
 
@@ -99,6 +126,8 @@ Use expand → migrate → contract for format changes. Use maintenance windows 
 - tool-failure and error-log triage;
 - performance regressions;
 - a backlog re-plan.
+
+Run standing lanes **on change**, not on a timer. Revisit affected user journeys after meaningful UI or contract changes and releases, comparing them against agreed reference behavior: loading, error and empty states, accessibility, responsive layout. When you triage tool or error failures, keep the observation window and its limits: failure-only samples can't give you a failure rate, and missing logs don't prove success. Never replay a real mutation to test a hypothesis. Reuse existing findings, and don't re-audit unchanged surfaces.
 
 You can also file new, independently mergeable work with [`keep-the-pool-full`](../keep-the-pool-full/SKILL.md). Refilling counts as a change, so it isn't a silent wake. For finite work with `idle_policy = wait`, stop when the outcome is verified.
 
@@ -117,6 +146,8 @@ A question that truly needs a human states:
 - the exact URL or command;
 - your recommended answer;
 - what happens if the answer is no.
+
+Do the work yourself through APIs and tools whenever a route exists. Never make manual testing, a human sign-in or a settings click a prerequisite when there's an automated way. If a setting really is UI-only, give the exact URL and paste-ready values once, then continue.
 
 Ask it once. In `overnight` or `unattended` mode, put it in the next status report instead of interrupting. Keep working on everything that doesn't depend on the answer. An automatic "user unavailable" reply is not new evidence, so don't ask again. Never ask for permission the level already grants. Never invent an approval step, an exact-GO phrase, a lock or a preflight.
 
@@ -148,6 +179,24 @@ At meaningful points (after a batch lands, after a stall, at each digest), ask w
 - **Remove the process you invented.** List the active constraints. Drop agent-sourced ones that have expired or have no source and that block the goal. Say so in the next status.
 - Compare ETA vs. actual, and stall minutes. Make one workflow change at a time (split, merge or re-scope lanes; change concurrency or model tier) and keep it or revert it on evidence.
 - When a correction repeats, route it to a durable layer with [`steer-once`](../steer-once/SKILL.md). Don't just apologise and carry on.
+- When several variants of a prompt, definition or config are plausible, compare them as paired arms against a control ([`experiment-arms`](../experiment-arms/SKILL.md)), not one before/after change at a time. Search on replayed or seeded tasks, then confirm the winner on live work.
+- **Evolve this skill through review.** After meaningful lessons, revise this SKILL.md through an issue and a reviewed PR, with the evidence in the PR. Update or remove the rule; don't append incident history. Keep SHAs, session IDs and live state out of it. Retire guidance that no longer earns its cost.
+
+### 12. Move lanes to the cloud, one at a time
+
+The long-term direction is for repeatable lanes (review, CI repair, issue repro, status, next-work pickup) to run as Copilot Automations, while the local coordinator moves toward supervision and exceptions. You don't need a hierarchy or cross-session messaging first. Start with independent jobs that read durable inputs (issues, PRs, artifacts) and write durable outputs (reviews, labels, PRs). Use [`automate-it`](../automate-it/SKILL.md) for each one.
+
+Move **one bounded lane at a time**, under explicit ownership:
+1. Establish what the hosted run can actually do: tools, permissions, trigger, durable checkpoint, acceptance evidence, and the escalation path.
+2. Qualify it on observed hosted outputs. Local and hosted workers must never compete for the same issue, PR, queue or release.
+3. Record the cutover and stop the local predecessor's writes. Keep release as one serialized lane across both places.
+4. Declare it migrated only after it has produced outputs **and** kept picking up next work from events, with no local prompting, over an agreed observation window. One good run isn't a migration.
+
+Rules:
+- One improver with a global view owns changes to automation definitions. Other lanes propose; they don't rewrite themselves.
+- A sent message isn't proof the next owner acted. Confirm delivery *and* consumption before depending on a handoff.
+- Treat automation-wide stalls (lanes idle, triggers unmatched, schedules skipped) as delivery outages, not background noise.
+- Judge the move by **valuable PRs landed through it**, not by the number of lanes or runs.
 
 ## Dials
 
