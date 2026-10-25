@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>lever: example exchanges</title>
+<!-- Source for the PNGs in this folder. Render with: node docs/examples/render.mjs -->
+<style>
+:root{--bg:#f0f5f1;--mut:#7b8d97;--line:#d7e1da;--g:#0abe3d;--gd:#08862a;--gl:#5fec83;--gp:#b9faca;--vi:#ad85ff;--in:#5638f8;--pk:#ff7cec;--or:#ef8939;--cy:#9eebff;--li:#d2f937;--ol:#ba9f09;--t1:#dcf4e2;--t2:#dcecdf}
+*{box-sizing:border-box}
+body{margin:0;padding:40px;background:#c9d3cc;font-family:'Mona Sans',system-ui,sans-serif;color:#000;-webkit-font-smoothing:antialiased;display:grid;gap:40px;justify-content:center}
+.mono,code{font-family:'Monaspace Neon',ui-monospace,Menlo,monospace}
+.ex{width:1200px;background:var(--bg);padding:52px 60px 40px;position:relative;overflow:hidden}
+.ex .px{position:absolute;top:0;right:0}
+.hd{display:flex;align-items:center;gap:16px;position:relative}
+.cmd{font-family:'Monaspace Neon',monospace;font-size:24px;padding:8px 16px 9px;background:var(--c)}
+.mode{font-size:15px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);font-weight:500}
+h2{font-size:46px;line-height:1.08;letter-spacing:-.035em;font-weight:400;margin:26px 0 30px;max-width:900px;position:relative}
+h2 span{color:var(--mut)}
+.turn{display:grid;grid-template-columns:40px 1fr;gap:18px;margin-top:18px}
+.av{width:40px;height:40px;position:relative}
+.you .av{background:var(--pk)}
+.cp .av{background:#000}
+.cp .av::after{content:'';position:absolute;inset:12px;background:var(--gl)}
+.who{font-size:15px;color:var(--mut);font-weight:500;letter-spacing:.04em;margin:0 0 6px}
+.msg{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 22px;font-size:21px;line-height:1.42}
+.you .msg{font-family:'Monaspace Neon',monospace;font-size:21px;background:#fff}
+.you .msg b{font-weight:400;background:var(--c);padding:1px 6px}
+.msg p{margin:0 0 10px}.msg p:last-child{margin:0}
+.msg code{font-size:.9em;background:var(--t2);padding:1px 6px;border-radius:4px}
+.kv{display:grid;grid-template-columns:190px 1fr;margin:6px 0 12px;border-top:1px solid var(--line)}
+.kv>*{padding:9px 0;border-bottom:1px solid var(--line)}
+.kv dt{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);font-weight:500;padding-top:13px}
+.kv dd{margin:0;font-size:20px}
+.tbl{width:100%;border-collapse:collapse;margin:6px 0 12px;font-size:19px}
+.tbl td{padding:8px 10px 8px 0;border-bottom:1px solid var(--line);vertical-align:baseline}
+.tbl td.n{font-family:'Monaspace Neon',monospace;font-size:17px;white-space:nowrap}
+.v{display:inline-block;font-family:'Monaspace Neon',monospace;font-size:15px;padding:3px 9px;letter-spacing:.04em}
+.keep{background:var(--gp);color:#05601e}.drop{background:#e3e9e5;color:#5b6a72}.act{background:#ffd9b8;color:#8a3d00}.hl{background:var(--li)}
+.strike{text-decoration:line-through;text-decoration-color:var(--pk);text-decoration-thickness:3px;color:var(--mut)}
+.mut{color:var(--mut)}
+.ft{display:flex;justify-content:space-between;margin-top:30px;font-family:'Monaspace Neon',monospace;font-size:14px;color:var(--mut)}
+.lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:8px 0 12px}
+.lane{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.lane h4{margin:0;padding:8px 12px;font-size:15px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.lane div{padding:10px 12px;font-family:'Monaspace Neon',monospace;font-size:15px;line-height:1.45}
+.bars{display:grid;grid-template-columns:330px 1fr 80px;gap:8px 14px;align-items:center;margin:6px 0 12px;font-size:19px}
+.bars i{display:block;height:18px;background:var(--c)}
+</style>
+</head>
+<body>
+
+<!-- 1. /lever -->
+<article class="ex" id="lever" style="--c:var(--li)">
+  <div class="hd"><span class="cmd">/lever</span><span class="mode">Front door</span></div>
+  <h2>One command to remember. <span>It picks the skill.</span></h2>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/lever</b> our CI is slow and I'm tired of hitting rerun</div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
+    <p>That's a <b>Loop</b> problem: you want something that already exists to get measurably better. Running <code>/find-the-loop</code>, then <code>/experiment-arms</code>.</p>
+    <table class="tbl">
+      <tr><td class="n">Build</td><td>something new, no signal yet</td><td class="n mut">/brief</td></tr>
+      <tr class="hl"><td class="n">Loop</td><td>make an existing thing better</td><td class="n">/find-the-loop</td></tr>
+      <tr><td class="n">Run</td><td>you keep doing it by hand</td><td class="n mut">/automate-it</td></tr>
+      <tr><td class="n">You</td><td>get better at steering agents</td><td class="n mut">/prompt-mirror</td></tr>
+    </table>
+    <p class="mut">Next time you can type <code>/find-the-loop</code> directly.</p>
+  </div></div></div>
+  <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
+</article>
+
+<!-- 2. /find-the-loop -->
+<article class="ex" id="find-the-loop" style="--c:var(--gl)">
+  <div class="hd"><span class="cmd">/find-the-loop</span><span class="mode">Loop mode</span></div>
+  <h2>How would we know it worked? <span>Before touching a single file.</span></h2>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/find-the-loop</b> our CI is slow</div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
+    <p>Loop Card, <span class="mono">ci-time-to-green</span>. No code changed yet.</p>
+    <dl class="kv">
+      <dt>Outcome</dt><dd>PR time to green, push → all required checks</dd>
+      <dt>Instrument</dt><dd>paired reruns on the same commit, read with <code>gh run</code></dd>
+      <dt>Baseline</dt><dd><span class="mono">p50 31 min · p90 52 min</span> (n=12, main)</dd>
+      <dt>Critical path</dt><dd><code>test-windows</code>. Everything else is done 9 min earlier.</dd>
+      <dt>Noise floor</dt><dd><span class="mono">±2.4 min</span> at p50 (6 unchanged runs)</dd>
+      <dt>Keep bar</dt><dd><span class="strike">any improvement</span> &nbsp;<span class="hl">≥ 1 min on the critical path</span>, flake rate not worse</dd>
+    </dl>
+    <p>Edit the keep bar, or say go.</p>
+  </div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg">bar's good. go</div></div></div>
+  <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
+</article>
+
+<!-- 3. /experiment-arms -->
+<article class="ex" id="experiment-arms" style="--c:var(--gl)">
+  <div class="hd"><span class="cmd">/experiment-arms</span><span class="mode">Loop mode</span></div>
+  <h2>One agent per idea. <span>Keep what clears the bar. Write down the rest.</span></h2>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/experiment-arms</b> try the 6 ideas on the card</div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
+    <p>6 arms and 1 control, 3 rounds each, same commit. An arm is kept only if it beats control in every round.</p>
+    <table class="tbl">
+      <tr><td>shard tests 4 → 8</td><td class="n">−6.1 min</td><td><span class="v keep">KEEP</span></td></tr>
+      <tr><td>treeless git fetch</td><td class="n">−3.6 min</td><td><span class="v keep">KEEP</span></td></tr>
+      <tr><td>bigger runner</td><td class="n">−2.0 min</td><td><span class="v drop">DROP</span> <span class="mut">2× cost</span></td></tr>
+      <tr><td>cache the package registry</td><td class="n">−0.4 min</td><td><span class="v drop">DROP</span> <span class="mut">under the bar</span></td></tr>
+      <tr><td>split the lint job</td><td class="n">0 on crit. path</td><td><span class="v drop">DROP</span></td></tr>
+      <tr><td>the thing from that tweet</td><td class="n">+0.2 min</td><td><span class="v drop">DROP</span> <span class="mut">lol</span></td></tr>
+    </table>
+    <p>2 kept, stacked into 2 PRs for review. 4 negatives in the ledger so nobody burns an afternoon on them again.</p>
+  </div></div></div>
+  <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
+</article>
+
+<!-- 4. /brief -->
+<article class="ex" id="brief" style="--c:var(--vi)">
+  <div class="hd"><span class="cmd">/brief</span><span class="mode">Build mode</span></div>
+  <h2>You type 12 words. <span>It writes the brief an agent can run without you.</span></h2>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/brief</b> add offline mode to the editor. ship it by tomorrow</div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
+    <dl class="kv">
+      <dt>Your words</dt><dd>"add offline mode to the editor. ship it by tomorrow"</dd>
+      <dt>Done when</dt><dd>edit with the network off → reconnect → nothing lost. Proven by an E2E test, not a vibe.</dd>
+      <dt>Budget</dt><dd><code>standard</code> · 18 h · 4 lanes</dd>
+      <dt>Autonomy</dt><dd>L2: agents open PRs, you merge</dd>
+      <dt>Stop if</dt><dd>it needs a schema migration, or 2 lanes are blocked at once</dd>
+      <dt>Reports</dt><dd>only when something changed</dd>
+    </dl>
+    <p>Starting 4 lanes: storage, sync queue, conflict UI, E2E. Go to bed.</p>
+  </div></div></div>
+  <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
+</article>
+
+<!-- 5. /refactor-pipeline -->
+<article class="ex" id="refactor-pipeline" style="--c:var(--ol)">
+  <div class="hd"><span class="cmd">/refactor-pipeline</span><span class="mode">Build mode</span></div>
+  <h2>Three terminals, one job each. <span>They never talk to each other.</span></h2>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/refactor-pipeline</b> src/core is 400k lines. cut it in half</div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
+    <p>Paste one block into each terminal. They coordinate only through the branch and the PR stack.</p>
+    <div class="lanes">
+      <div class="lane"><h4 style="background:var(--gl)">Producer</h4><div>/goal one split per commit, tests green, until core is ≤ 200k<br>/every 30m report lines vs. baseline</div></div>
+      <div class="lane"><h4 style="background:var(--vi)">Packager</h4><div>/every 3h turn new commits into PRs under 2k lines each</div></div>
+      <div class="lane"><h4 style="background:var(--or)">Shepherd</h4><div>/every 20m walk the stack: conflicts, red CI, review comments</div></div>
+    </div>
+    <p>Lesson baked in: <b>push immediately, then verify.</b> You merge.</p>
+  </div></div></div>
+  <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
+</article>
+
+<!-- 6. /pr-shepherd -->
+<article class="ex" id="pr-shepherd" style="--c:var(--or)">
+  <div class="hd"><span class="cmd">/pr-shepherd</span><span class="mode">Work</span></div>
+  <h2>Stop watching CI. <span>It wakes on events and fixes the root cause.</span></h2>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/pr-shepherd</b> keep my stack green till it lands</div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot · wake 7</p><div class="msg">
+    <table class="tbl">
+      <tr><td class="n">PR 1</td><td>green, approved</td><td><span class="v keep">READY FOR YOU</span></td></tr>
+      <tr><td class="n">PR 2</td><td>red: not a flake. Upload timeout too low for big files.</td><td><span class="v act">FIXED · PUSHED</span></td></tr>
+      <tr><td class="n">PR 3</td><td>conflict with main</td><td><span class="v act">REBASED · PUSHED</span></td></tr>
+      <tr><td class="n">reviews</td><td>3 threads: 2 fixed, 1 answered with why not</td><td><span class="v keep">RESOLVED</span></td></tr>
+    </table>
+    <p class="mut">Next wake on a CI or review event. Nothing changes, nothing posted.</p>
+  </div></div></div>
+  <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
+</article>
+
+<!-- 7. /cross-model-review -->
+<article class="ex" id="cross-model-review" style="--c:var(--vi)">
+  <div class="hd"><span class="cmd">/cross-model-review</span><span class="mode">Work</span></div>
+  <h2>Three models, reviewing blind. <span>Only what survives gets posted.</span></h2>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/cross-model-review</b> this PR</div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
+    <div class="bars">
+      <span>raw findings, 3 models</span><i style="width:100%;--c:#e3e9e5"></i><span class="mono">11</span>
+      <span>at least 2 models agree</span><i style="width:27%;--c:var(--vi)"></i><span class="mono">3</span>
+      <span>survived a proof attempt</span><i style="width:9%;--c:var(--g)"></i><span class="mono">1</span>
+    </div>
+    <p>Posted 1 inline comment: <code>cache key ignores the lockfile, so a dependency bump serves stale builds</code>. Repro attached.</p>
+    <p class="mut">Dropped 10. If your bot comments on every PR, people mute your bot.</p>
+  </div></div></div>
+  <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
+</article>
+
+<!-- 8. /automate-it -->
+<article class="ex" id="automate-it" style="--c:var(--cy)">
+  <div class="hd"><span class="cmd">/automate-it</span><span class="mode">Run mode</span></div>
+  <h2>Did it by hand three times? <span>Now it's a Copilot Automation. Paused.</span></h2>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/automate-it</b> make the stack shepherd an automation for this repo</div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
+    <dl class="kv">
+      <dt>Created</dt><dd><code>pr-shepherd</code> · <span class="v drop">PAUSED</span></dd>
+      <dt>Trigger</dt><dd>checks completed, PR updated. Drafts skipped.</dd>
+      <dt>Tools</dt><dd>6 of 41. Only what it needs.</dd>
+      <dt>Improver</dt><dd>proposes edits to its own prompt. You approve.</dd>
+    </dl>
+    <p>Dry run on 3 past events:</p>
+    <table class="tbl">
+      <tr><td>PR updated, checks green</td><td><span class="v drop">NOOP</span></td></tr>
+      <tr><td>review comment: "nit: rename this"</td><td><span class="v drop">NOOP</span> <span class="mut">author's call</span></td></tr>
+      <tr><td>main moved, stack conflicts</td><td><span class="v act">REBASE + PUSH</span></td></tr>
+    </table>
+    <p>Turn it on?</p>
+  </div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg">ship it</div></div></div>
+  <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
+</article>
+
+<!-- 9. /prompt-mirror -->
+<article class="ex" id="prompt-mirror" style="--c:var(--pk)">
+  <div class="hd"><span class="cmd">/prompt-mirror</span><span class="mode">You</span></div>
+  <h2>How do you actually steer agents? <span>Your own sessions know.</span></h2>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/prompt-mirror</b> last 30 days</div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
+    <p>412 prompts across 61 sessions. Read locally. Nothing left this machine.</p>
+    <div class="bars">
+      <span>"status?" / "any update?"</span><i style="width:100%;--c:var(--pk)"></i><span class="mono">54×</span>
+      <span>CI logs pasted by hand</span><i style="width:41%;--c:var(--pk)"></i><span class="mono">22×</span>
+      <span>"push, <i style="display:inline;background:none">then</i> verify"</span><i style="width:17%;--c:var(--pk)"></i><span class="mono">9×</span>
+    </div>
+    <p>1. You're the status page. Add <code>/progress-contract</code> and it reports when something changes.<br>
+       2. You're the CI reader. Give it <code>gh run</code> and let it read logs itself.<br>
+       3. Same correction 9 times. That's a rule: <code>/steer-once</code>.</p>
+  </div></div></div>
+  <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
+</article>
+
+<!-- 10. /steer-once -->
+<article class="ex" id="steer-once" style="--c:var(--pk)">
+  <div class="hd"><span class="cmd">/steer-once</span><span class="mode">You</span></div>
+  <h2>Say it once. <span>It writes the rule, then checks the rule worked.</span></h2>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg"><b>/steer-once</b> so which bit about push immediately THEN verify did you not understand</div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
+    <p>Fair. You've said this 9 times in 3 weeks. The cheapest layer that would have stopped all 9 is an instruction, not a CI check.</p>
+    <dl class="kv">
+      <dt>Opened PR</dt><dd><code>AGENTS.md</code> +2 lines: push the commit before local validation, then verify the pushed head.</dd>
+      <dt>Evidence</dt><dd>the 9 messages, quoted, with dates</dd>
+      <dt>Re-check</dt><dd>in 7 days. Keep if repeats drop to 0; otherwise escalate a layer.</dd>
+    </dl>
+  </div></div></div>
+  <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
+</article>
+
+<script>
+// Pixel-tile corner, in the article's own colour.
+for (const a of document.querySelectorAll('.ex')) {
+  const T = 30, cells = [[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[0,1],[2,1],[3,1],[5,1],[1,2],[3,2],[4,2],[5,2],[4,3],[5,3],[2,3],[5,4],[3,4],[4,5],[5,5],[5,6]];
+  const shades = ['var(--c)', 'var(--t1)', 'var(--t2)', 'var(--c)', 'var(--gp)'];
+  let s = '';
+  cells.forEach(([x, y], i) => {
+    s += `<rect x="${(5 - x) * T}" y="${y * T}" width="${T}" height="${T}" fill="${shades[(x * 7 + y * 3 + i) % shades.length]}" opacity="${x < 2 && y > 1 ? .55 : 1}"/>`;
+  });
+  a.insertAdjacentHTML('afterbegin', `<svg class="px" width="${6 * T}" height="${7 * T}" aria-hidden="true">${s}</svg>`);
+}
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # Modes
 
-Not every piece of work is a loop. Before you pick skills, pick the mode the work is in. Most projects move through all three, and many run two at once.
+Not every piece of work is a loop. Before you pick skills, pick the mode the work is in. Most projects move through all three, and many run two at once. Not sure which mode you're in? [`/lever`](../skills/lever/) picks for you.
 
 | Mode | The work looks like | "Done" means | Human job | Start with |
 |---|---|---|---|---|

@@ -42,10 +42,36 @@ Shared by every skill:
 
 ## Start here
 
+Don't know which skill you want? Type **`/lever`** and describe the problem. It picks the mode and the skill, says which in one line, and runs it. Next time you can type that skill directly.
+
 1. **Stuck, or iterating by feel?** Run `find-the-loop`. It turns "it still feels slow" into a metric the agent can measure itself.
 2. **Handing off work?** Run `brief`. It turns your 20-word ask into something an agent can run unattended, with a done-when, a budget, and an autonomy level.
 3. **Doing the same thing for the third time?** Run `automate-it`. It turns it into a Copilot Automation that starts paused, uses least-privilege tools, and comes with an improver that proposes fixes for you to approve.
 4. **Want lever to fit *you*?** Run `prompt-mirror` on your own session history, then `steer-once` to turn your repeated corrections into instructions that stick.
+
+## Try it
+
+In Copilot CLI or the app, a skill is a slash command: `/<skill> <what you want, in your own words>`.
+
+```text
+/lever our CI is slow and I'm tired of hitting rerun
+/find-the-loop the editor feels janky when I scroll big files
+/experiment-arms try the 6 ideas on the card
+/brief add offline mode to the editor. ship it by tomorrow
+/refactor-pipeline src/core is 400k lines. cut it in half
+/pr-shepherd keep my stack green till it lands
+/cross-model-review this PR
+/automate-it make the stack shepherd an automation for this repo
+/prompt-mirror last 30 days
+/steer-once push immediately, then verify
+/autonomy-dial agents can merge docs PRs in this repo, nothing else
+```
+
+![/lever routes a plain-words ask to the right skill](docs/examples/lever.png)
+
+![/find-the-loop writes a Loop Card before touching code](docs/examples/find-the-loop.png)
+
+More in the **[examples gallery](docs/examples.md)**: experiment arms, a brief, the three-terminal refactor, the PR shepherd, cross-model review, an automation and the two "You" skills.
 
 ## Install
 
