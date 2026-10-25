@@ -53,6 +53,8 @@ Ask only for the dials the prompt didn't already answer, in **one** message that
 
 The autonomy level is resolved per [`docs/autonomy.md`](../../docs/autonomy.md). A preset *requests* a level. The repo ceiling, `.github/lever.yml` and you can lower it. Only you can raise it, and only up to the ceiling. If the prompt already said "then merge" or "hand off to the owning team", that is the answer. Don't ask again.
 
+**Owner directive format.** When the operator changes direction mid-run, record it as: `outcomes (priority, label rule, cap) · workers: N · merge authority: <who> · release owner: <who> · tracking: <issue> · until: <condition>`. A newer directive supersedes older ones and any repo doc that conflicts with it. Fix the doc in a follow-up PR rather than obeying it.
+
 ### 2. Plan lanes, not documents
 
 1. Turn the goal into outcomes, each with an observable done-when and a feedback loop (use [`find-the-loop`](../find-the-loop/SKILL.md) for any lane without one).
@@ -83,6 +85,8 @@ constraint | source (operator | repo | platform | agent:<lane>) | set | expires 
 
 "Narrow, never widen" on its own drives authority toward zero down a three-level tree, because every layer adds a gate and nobody clears them.
 
+**Handoff message.** A worker finishing a PR sends one line: `READY <pr> <head-sha>`. The receiver **re-runs the gate itself** on that head: open, not draft, mergeable, every required check green on that exact SHA, zero unresolved threads, and diff reviewed. It merges with an expected-head guard. A worker's claim is evidence level *claimed*, never *green*.
+
 Model choice: give the coordinator strong reasoning, give well-scoped implementation fast capable workers, and save the strongest reasoning for hard diagnosis and stuck lanes. Respect your stated model preferences.
 
 ### 3a. Each lane runs the shortest evidence-driven loop
@@ -98,7 +102,7 @@ Start from a concrete hypothesis. Inspect the evidence, make the smallest cohere
 
 Handle child completions and GitHub events as they arrive: reconcile, unblock, route each merged SHA to the release owner, and start the next ready lane. When the sweep fires (`sweep_interval`), check:
 
-1. **Liveness, recursively.** Find every descendant that is interrupted or idle with unfinished work and **rekick it automatically**. The rekick message carries what changed and what's expected, never a bare "continue". The user should never have to ask for this. If a child doesn't move after two rekicks, apply the takeover protocol (step 9). If your host can resume children natively, use that; if it can't, file the gap as a product bug rather than writing more prompt.
+1. **Liveness, recursively.** Find every descendant that is interrupted or idle with unfinished work and **rekick it automatically**. The rekick message carries what changed and what's expected, never a bare "continue". The user should never have to ask for this. If a child doesn't move after two rekicks, apply the takeover protocol (step 9). If your host can resume children natively, use that; if it can't, file the gap as a product bug rather than writing more prompt. Judge liveness by the last turn or tool timestamp, not by a busy flag. A session can show busy with no turn running. **If you deploy the platform you run on, resuming yourself and your children is the last step of the deploy**, not something the human notices later.
 2. **Watchdog metric: time since last merge.** Compare it to `stall_threshold`. If it's over, name the binding constraint (empty backlog, CI, review, quota, permission, a stuck lane) and act on it.
 3. **Green but not landed.** Hand each such PR to `pr-shepherd`.
 4. **Lane count below the minimum.** Refill (step 6).
@@ -118,6 +122,8 @@ Per-PR landing belongs to `pr-shepherd`, at the resolved level. **After a merge,
 - rolls back on regression.
 
 Never redeploy unchanged source just to look busy, and never waive CI or compatibility checks to simulate continuous deployment. Use expand → migrate → contract for format changes. Use maintenance windows only for breaking changes or data migrations. Report merge→production latency.
+
+**Pick the release target once per train.** Late retargets ("final target update", "revert", "ship whichever goes green first") cost a full re-plan each. Batch everything merged since the last release, and change target only for a regression.
 
 ### 6. Never idle (when `idle_policy = refill`)
 
@@ -159,6 +165,8 @@ Ask it once. In `overnight` or `unattended` mode, put it in the next status repo
 3. Claim it explicitly in the ledger and on the PR or issue, so there is exactly one writer.
 4. Continue from that evidence, not from memory or a stale plan. Never reset or rewrite another owner's ref. Preserve their work.
 5. Stop or archive the previous owner once the handoff is confirmed.
+
+When a worker fails permanently, start **exactly one** replacement per issue. It continues the same branch and PR after reading the predecessor's handoff. Never start a fresh branch, and never start two replacements.
 
 ### 10. Report through the progress contract
 

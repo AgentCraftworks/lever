@@ -51,7 +51,7 @@ You can run it locally (a session with a self-wake or session automation) or in 
    | L4 | `gh pr merge <n> --squash --match-head-commit <sha>`, or enqueue or enable auto-merge if the repo uses a merge queue. If a ruleset or hook blocks it, report and stop. Don't retry around it. |
    | L5 | L4, then hand the merged SHA to the release owner and watch the health window. |
 
-   Don't stop at "ready" when the level says land it. Don't invent an extra approval step.
+   Don't stop at "ready" when the level says land it. Don't invent an extra approval step. Copy the head SHA from the gate output into the merge call. Never type or reconstruct it. One run invented a SHA tail from memory, and only the expected-head guard stopped the merge.
 9. **Verify, record, schedule.** After any write, re-read the one field it should have changed. Write a run record (see below). End with exactly one of `ACTED(summary)`, `NOOP(reason)` or `BLOCKED(reason)`. A `NOOP` is success, and it stays silent: no comment, no chat message. Rely on events for the next wake. Schedule a fallback wake only if no event will arrive, and never sooner than `min_wake_interval`.
 
 ## Dials

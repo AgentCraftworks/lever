@@ -23,10 +23,10 @@ Repeatable work belongs in the cloud, on an event, with nobody babysitting it. T
 
 1. **Name the outcome and the metric.** One sentence for "done" (a comment posted, a label applied, a PR landed, a digest read). A metric with a denominator: `useful outputs / eligible events`, for example "opted-in PRs merged within 24 h of first green / opted-in PRs". A duration is not a finish condition. Refuse to continue without a denominator.
 2. **Mine prior runs.** Find the last 5–20 times the task was done by hand or by a local template. Extract the decision rules, the actions actually taken, and **every correction the user made**. Each correction becomes a numbered contract rule. Example: "returning failures is lame, why can't it just return nothing to do" became the rule `NOOP is success`.
-3. **Pick the trigger** from the decision table in [reference.md](reference.md#trigger-decision-table). Prefer an event over polling. Add an interval sweep as a fallback for missed events. Add a query filter (for example `-is:draft`, `label:shepherd`, `branch:main`) on every PR and issue trigger. **Triggers decide cost**: an unfiltered per-push trigger can multiply runs per PR without adding signal.
+3. **Pick the trigger** from the decision table in [reference.md](reference.md#trigger-decision-table). Prefer an event over polling. Add an interval sweep as a fallback for missed events. Add a query filter (for example `-is:draft`, `label:shepherd`, `branch:main`) on every PR and issue trigger. **Don't wake on your own writes.** Exclude events whose actor is the automation's own identity, and events for a head SHA the automation just pushed. In one long-running coordinator, about 1 in 6 wakes was the agent reacting to its own push, PR or merge, and about 6 in 10 wakes did nothing. Filter at the subscription; a prompt rule still pays for the wake. **Triggers decide cost**: an unfiltered per-push trigger can multiply runs per PR without adding signal.
 4. **Derive the minimal tool set from the allowed actions.** List the actions the contract allows, then map each one to tool ids with the least-privilege table in [reference.md](reference.md#least-privilege-tool-table). Read tools are always fine; every write tool needs a matching allowed action. A comment-only reviewer needs about 8 tools, not 49. Never grant `github/update_automation` to a worker or an improver.
 5. **Write the prompt** as a PARAMETERS block plus a stable CONTRACT using the [template](reference.md#prompt-template). PARAMETERS is the only section that varies between repos and revisions. The CONTRACT ends every run with exactly one outcome — `ACTED(summary)`, `NOOP(reason)` or `BLOCKED(reason)` — and writes one record per run.
-6. **Define the quiet exit.** State exactly when the run posts nothing: draft PR, stale head SHA, duplicate of an earlier run, nothing above the confidence floor, no change since the last digest. Silence is the default; a no-op is a successful run, not a failure.
+6. **Define the quiet exit.** State exactly when the run posts nothing: draft PR, stale head SHA, duplicate of an earlier run, nothing above the confidence floor, no change since the last digest. Silence is the default; a no-op is a successful run, not a failure. After writing the run record, **end the run**. Don't wait for the host's idle timeout. Hosted runs that did 1–2 minutes of work routinely held a runner for 15–20 minutes.
 7. **Preflight (read-only).**
    - `get_automations_configuration_for_repository`: automations are enabled and you can create them; note allowed models and ownership.
    - `list_automations`: no existing automation with the same name or trigger.
@@ -45,6 +45,7 @@ Repeatable work belongs in the cloud, on an event, with nobody babysitting it. T
 |---|---|---|
 | Trigger breadth | One event trigger + query filter + daily or hourly sweep | Event only; sweep only; more event types (each adds runs) |
 | Query filter | `-is:draft` on PR triggers; label or branch filter where possible | None (costly), path filter, label opt-in |
+| Wake filter | Exclude self-actor and self-pushed SHAs | Include (only for loop-safe, capped jobs) |
 | Model tier | Standard tier | Premium tier costs about 15× per call. Record why in the description; let the improver re-test the choice |
 | Write scope | `trigger` (only the resource that fired) | `repository` (digests, tracking issues, ledgers) |
 | Autonomy level (`AUTONOMY`) | L0 at creation; each recipe states its target | Up to L5 per [docs/autonomy.md](../../docs/autonomy.md), capped by repo rules; the tool list enforces it |
@@ -68,6 +69,7 @@ The tool list is the enforcement; PARAMETERS is the intent. Below L3 the merge t
 ## This skill's own feedback loop
 
 - **Metric:** cost per useful output = (runs × model multiplier) / useful outputs, tracked weekly with the post rate and NOOP mix.
+- **Active ratio:** tool-active minutes / wall minutes per run. Below 0.3 means runs idle out instead of ending. **Self-echo rate:** wakes caused by the automation's own writes / all wakes; the target is 0.
 - **Check at 7 days:** runs/day vs eligible events (are triggers too broad?), BLOCKED reasons, failures that were really no-ops, write tools never used (remove them).
 - Every change is a new dated revision with one reason. "No change" is a valid weekly outcome.
 

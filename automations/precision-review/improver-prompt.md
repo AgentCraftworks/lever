@@ -35,7 +35,8 @@ You improve the precision-review automation by proposing changes. You never chan
    - a proof-table row that BAD findings consistently filled weakly (for example, reachability asserted
      but not traced): tighten that row's wording;
    - missed defects of one kind (≥ 3 examples): add one check to the candidate search, never more than one;
-   - runs per PR rising: narrow a trigger filter or SKIP_PATHS.
+   - runs per PR rising: narrow a trigger filter or SKIP_PATHS; or retrospective share above 10% → propose an
+     earlier trigger (`ready_for_review`), or drop `synchronize` for PRs already reviewed at this head.
    Never propose a higher MAX_FINDINGS, new write tools, APPROVE or REQUEST_CHANGES.
 6. Quiet exit. If no change has ≥ 3 supporting examples and an effect larger than week-to-week noise:
    NOOP(no change: <reason>). That is a good outcome.

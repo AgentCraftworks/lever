@@ -42,12 +42,17 @@ Unattended work fails quietly. A host restarts and children sit idle, a quota ru
 |---|---|---|
 | **Supply** | Pool empty or low; workers `NOOP(no eligible work)` | Run `keep-the-pool-full`; raise its target |
 | **CI** | Main red, or PRs red on the same job | Route to main-red triage; quarantine a proven flake |
-| **Quota** | 403/429, minutes or credits exhausted, runs stopped mid-task | Lower concurrency or trigger breadth; adopt the shared API budget below |
+| **Rate limit (secondary)** | 403 or 429 with a rate-limit body or Retry-After; bursts of content-creating writes from many lanes on one identity | Classify as **retryable, not permission**. Record "not attempted, retry after <absolute time>". Pace all lanes through one budget; serialize writes |
+| **Quota (primary)** | Hourly API, CI-minute or credit cap exhausted | Lower concurrency or trigger breadth; adopt the shared API budget below |
 | **Permission** | `BLOCKED` on a missing tool, scope or ruleset | One human-only request; or remove the step that needs it |
 | **Prompt drift** | Rising `BLOCKED` or invalid outputs after a revision; humans overriding outputs | Revert to the last good revision, or propose one contract-rule change |
 | **Orphaned** | Branch or PR with an owner that stopped (host restart, interrupted session) | Take over (below) |
 | **Trigger** | Eligible items with no run (filter too narrow); or many runs per item (too broad) | Adjust one trigger filter; add a sweep |
 | **Review / merge** | Green PRs waiting on threads or approvals | Thread-resolution sweep; check the autonomy level is what the human intended |
+| **Busy-but-idle** | Session reports busy, but there has been no new turn or tool call for longer than `IDLE_AFTER` | Rekick with what changed and what's expected. Judge liveness by the last tool timestamp, not a status flag |
+| **Host restart** | Coordinator and children went idle at the same time, right after a deploy of the platform they run on | Resume the root first, then its children. Make "resume self" the last step of any self-deploy |
+| **Self-echo / no-op storm** | No-op wakes above 50%, or any wakes triggered by the agent's own writes | Tighten the wake filter (see `automate-it` step 3) |
+| **Tool-profile mismatch** | A tool fails on every call; a write tool sits in a read-only profile | Remove it, or fix the profile. Every-call failures are a config bug, not flakiness |
 
 ### Takeover protocol
 
@@ -65,7 +70,7 @@ Quota is the failure mode that grows with success: more agents, more polling, mo
 - **Set a per-unit budget**, for example at most 75 REST calls per merged PR across all callers, and a per-hour ceiling below the token's limit.
 - **Pace through one budget**, not N independent ones. Priority order: merge-path work first, reports last.
 - **Cut calls before adding retries**: read the head SHA only; one batched GraphQL read per wake; bounded pages; cached job lists; wait on events instead of polling.
-- **Alert on overspend**: calls per merged PR above budget, or any 403/429, is a `Quota` stall.
+- **Alert on overspend**: calls per merged PR above budget, or any 403/429, is a `Rate limit` or `Quota` stall.
 
 ## Dials
 
@@ -105,6 +110,7 @@ To run the weekly automation half unattended, install [automations/automation-he
 
 - Morning messages in one long unattended run: "no merged commits in 19 hours", "no commit all night", "lots of draft PRs, nothing merged for 8 hours". The human computed the metric himself for about two weeks before it became a 30-minute job; once encoded, overnight stalls became visible and short.
 - Rekicking interrupted child sessions was the top manual chore (at least 7 explicit requests) until it became a rule that the human should never have to ask.
-- Unattended runs normally spend 7–13% of their runs checking state and exiting; a watchdog must tell a healthy heartbeat from a stall.
+- Scheduled single-shot runs spend 7–13% of runs checking state and exiting. **Event-woken, long-lived sessions are different**: in one sample, about 62% of wakes were no-ops and about 16% were self-echo. A watchdog must know which kind of lane it is judging.
 - CI babysitters once made about 45k API calls in 3 hours and hit the rate limit. The fix was a shared budget and fewer calls per merge, not retries.
+- In one fleet of hosted agents, the secondary rate limit was mentioned more than 15 times as often as flaky tests. The damage came from misreading a rate-limited 403 as access-denied and reporting merges as failed. The fix was classification plus one paced budget, not retries.
 - Revisions that changed one thing (a model swap, a prompt cut 15% with the same rules) could be judged; "no change" was often the right answer.

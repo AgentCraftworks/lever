@@ -36,7 +36,7 @@ No push, no approve, no request-changes, no merge, no issue writes. The contract
 ## Outcome metric
 
 - **Primary:** findings addressed before merge / findings posted (a commit touched the cited lines, or the thread was resolved after a fix).
-- **Also:** runs that posted anything / runs (expect it to be low; that's the point), runs per PR.
+- **Also:** runs that posted anything / runs (expect it to be low; that's the point), runs per PR. **Review latency vs merge**: the share of reviews that finished after the PR merged ("retrospective"). Above 10% means the trigger fires too late or the queue is too long. Fix the trigger or concurrency, not the prompt. Also track **runs per PR**, with an alert above 5. One PR drew 24 review sessions in 3 days.
 - **Guardrail:** bugs later traced to a reviewed PR that the reviewer missed (sample them; don't chase zero).
 
 ## Install via GitHub MCP

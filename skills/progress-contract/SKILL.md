@@ -28,6 +28,8 @@ Use the weakest level that is true. Never round up.
 | deployed | It is running where users are | Release or deploy link + version |
 | measured | The outcome metric moved on real traffic | `metric: x → y (Δz%)`, n, link |
 
+A status record counts only after you have **read it back**. Write the artifact, fetch it, then report. Key artifacts by `<lane>/<pr>/<head-sha>`, so a re-run on the same head is a no-op by construction.
+
 ## Steps
 
 1. **Publish the plan at kickoff.** List 3–7 milestones with human-friendly labels, not PR numbers or SHAs. For each milestone give an ETA in the operator's timezone (`status.timezone` in `.github/lever.yml`, otherwise ask once), the evidence level that counts as done, and a confidence. If there is a deadline, add a checkpoint projection: what will be true at each checkpoint up to the deadline ("hour by hour until midnight").

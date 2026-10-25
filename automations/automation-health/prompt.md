@@ -37,6 +37,8 @@ RECORD_SINK:         run_summary
      on without a filter; premium model with no reason in the description; NOOP share above NOOP_ALERT on a
      non-sweep trigger; two automations acting on the same event and resource; no improver sibling;
      failures that were really no-ops.
+   - Flag any tool whose every call in the window failed. It's usually a write tool in a read-only profile.
+     Propose removing it, or fixing the profile.
 5. Pick at most MAX_PROPOSALS changes. Choose the one with the largest expected drop in METRIC or
    failures, with evidence (counts and at least 3 linked examples where examples exist). Prefer, in order:
    stop a repeated failure; narrow a trigger; remove an unused write tool; drop a premium tier; fix one
