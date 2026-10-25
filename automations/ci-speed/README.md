@@ -33,7 +33,7 @@ The cheap watch decides when the expensive lane wakes. **Triggers decide cost.**
 | `CI_MINUTES_PER_GOAL` | Set per repo | Hard stop; report Actions minutes spent per minute saved |
 | `API_RATE_FLOOR` | Pause below 20% of the hourly quota | Agent polling can burn a full quota and break unrelated tools |
 | `RUN_WINDOW` | Off-peak hours | Any |
-| `AUTONOMY` | L1: PRs for owners | Up to the repo ceiling; L4 with a standing grant for CI-config changes |
+| `AUTONOMY` | L1: PRs for owners. A safe floor for a team new to agents. | Raise it as the team trusts the evidence, up to the repo ceiling; L4 with a standing grant for CI-config changes |
 
 ## Guardrails
 

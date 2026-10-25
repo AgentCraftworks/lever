@@ -121,7 +121,7 @@ How far an agent may take a change is a dial the human sets, not a fixed propert
 
 ## Why this exists
 
-- One "agents never merge" rule was traced to its origin. It was a deliberate choice for one project: CI changes handed to their code owners as an evidence-backed stack. Summaries dropped the context, and the rule spread to work where the same human had said "monitor CI to green, then merge". A rule that was right for one repo hardened into doctrine for all of them. Recording grants verbatim, with source, scope and expiry, closes that gap.
+- One "agents never merge" rule was traced to its origin. It was framing in a write-up for engineers new to agents, chosen so a first try would feel safe. Agents and later summaries read it as doctrine and applied it to work where the same human had said "monitor CI to green, then merge". A floor chosen for one audience is not a ceiling for everyone. Recording grants verbatim, with source, scope and expiry, closes that gap.
 - In one two-week stretch, merge authority changed four times (merge, don't merge, merge this class, merge everything green). A fixed rule couldn't express that. A dial with a grants log can.
 - At peak, 31% of agent messages contained gate language and 42% contained waiting language. Once the rules were checked into the repo, gate language fell to about 3%.
 - Agents became more autonomous because they were granted permission they could verify, not because of a better model.
