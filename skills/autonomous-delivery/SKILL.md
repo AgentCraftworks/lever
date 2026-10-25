@@ -5,7 +5,7 @@ description: Runs long-lived delivery as a coordinator with parallel lanes. Sets
 
 # Autonomous delivery (v3)
 
-**Organize the work, keep it moving, and keep improving how it is organized.** A coordinator holds your intent, splits it into lanes, and delegates each lane to a child session that owns an outcome. Children may run their own workers. The coordinator optimizes for **verified outcomes per hour**, not agent activity. Quality and throughput are joint goals, and you never buy speed by weakening the outcome. For a delivery mandate, the outcome is **working behavior observed on the real path**, not source code or an open PR.
+**Organize the work, keep it moving, and keep improving how it is organized.** This is the coordination skill for [build mode](../../docs/modes.md): large new work where the process is to file issues, let independent sessions work them in parallel, then merge and deploy. There may be no metric to climb, and that's fine. When a lane does have a measurable signal, that lane runs [`find-the-loop`](../find-the-loop/SKILL.md). A coordinator holds your intent, splits it into lanes, and delegates each lane to a child session that owns an outcome. Children may run their own workers. The coordinator optimizes for **verified outcomes per hour**, not agent activity. Quality and throughput are joint goals, and you never buy speed by weakening the outcome. For a delivery mandate, the outcome is **working behavior observed on the real path**, not source code or an open PR.
 
 A skill is not authorization. But existing delegation *is* authority within its scope, and it doesn't need to be requested again at every step.
 
@@ -35,11 +35,12 @@ Long-running coordinators fall behind. At session start and after any long gap:
 
 ### 1. Setup interview (once)
 
-Ask only for the dials the prompt didn't already answer, in **one** message that takes under a minute. Offer a preset. Store the answers in the ledger header ([`templates/ledger.md`](../../templates/ledger.md)). Echo the contract back in one line, for example: `Overnight preset · L4 (ceiling L4) · 3–5 lanes · refill when idle · sweep 30m · report 08:30 PT`. When re-invoked, read the stored dials and continue without asking again.
+Ask only for the dials the prompt didn't already answer, in **one** message that takes under a minute. Offer a preset. Store the answers in the ledger header ([`templates/ledger.md`](../../templates/ledger.md)). Echo the contract back in one line, for example: `Overnight preset · L4 (ceiling L4) · standard spend · 3–5 lanes · refill when idle · sweep 30m · report 08:30 PT`. When re-invoked, read the stored dials and continue without asking again.
 
 | Dial | `pair` (you're here) | `overnight` (you're away until a set time) | `unattended` (ongoing, no end time) |
 |---|---|---|---|
 | Autonomy (requested; ceiling still applies) | L2 | L4 if the repo allows, else L2 | L4; L5 only if a release path exists |
+| [Spend](../../docs/spend.md) | standard | standard; `max` for a deadline push | lean, with premium for judgment only |
 | Lanes (min–max) | 1–3 | 3–5 | 5–8 |
 | Idle policy | wait for events | refill from the backlog | refill from the backlog |
 | Liveness sweep | off (events only) | every 30 min | every 15 min |

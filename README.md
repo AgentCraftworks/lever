@@ -12,9 +12,21 @@ The lesson behind most of them: the biggest wins came from **building a trustwor
 
 lever grew out of the [autonomous-delivery skill](https://gist.github.com/EvanBoyle/8c1a97f682d92dab8c09d0e1ea73f4a0): a coordinator that keeps parallel work moving, lands it and keeps improving how it's organized. Running that skill for weeks showed which parts really carried the weight. Those parts are now the separate skills here: the loop, the brief, the dial, the status contract, the review, and moving lanes into the cloud. [`autonomous-delivery`](skills/autonomous-delivery/) is still the top-level orchestrator that ties them together.
 
+## Pick a mode first
+
+Not everything is a loop. lever works in three [modes](docs/modes.md), and most projects move through all three:
+
+| Mode | When | Start with |
+|---|---|---|
+| **Build** | Something big and new, with no signal to climb yet. File issues, run independent sessions in parallel, merge, deploy, repeat. | `brief` → `autonomous-delivery` |
+| **Loop** | Make an existing thing measurably better. | `find-the-loop` → `experiment-arms` |
+| **Run** | Repeatable work that should happen without you. | `automate-it` |
+
+Two dials apply to every mode: **[autonomy](docs/autonomy.md)** (how much agents may do on their own) and **[spend](docs/spend.md)** (how many tokens and how much compute you'll pay for: `lean`, `standard` or `max`).
+
 ## Lower the floor, raise the ceiling
 
-| Loop | Floor: anyone, day one | Ceiling: unattended, at scale |
+| Question | Floor: anyone, day one | Ceiling: unattended, at scale |
 |---|---|---|
 | **The task**: is this change actually better? | [`find-the-loop`](skills/find-the-loop/) | [`experiment-arms`](skills/experiment-arms/) |
 | **The work**: is delivery moving, landing, visible? | [`brief`](skills/brief/) · [`progress-contract`](skills/progress-contract/) | [`autonomous-delivery`](skills/autonomous-delivery/) · [`pr-shepherd`](skills/pr-shepherd/) · [`landing-plan`](skills/landing-plan/) · [`cross-model-review`](skills/cross-model-review/) |
@@ -23,6 +35,7 @@ lever grew out of the [autonomous-delivery skill](https://gist.github.com/EvanBo
 
 Shared by every skill:
 - **[Autonomy dial](docs/autonomy.md)** (L0 propose → L5 land, release, observe). How much an agent may do on its own is *your setting*, capped by your repo's own rules. It is never hard-coded.
+- **[Spend dial](docs/spend.md)** (`lean` · `standard` · `max`): model tier, parallel lanes, review depth and trigger cadence, with order-of-magnitude costs.
 - **[Loop Card](templates/loop-card.md)**: outcome, metric, instrument, noise floor, keep bar, stop rule.
 - **[Ledger](templates/ledger.md)**: every attempt is recorded, including rejects.
 - **[Status digest](templates/status-digest.md)**: `x → y (Δ%)`, ETA, evidence level, silent when nothing changed.

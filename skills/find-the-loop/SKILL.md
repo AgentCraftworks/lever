@@ -18,7 +18,7 @@ The loop is the product and the agent is the motor. An agent with no trustworthy
   - The human reports a measurement such as "still 3 fps" or "CI took 40 min". They are acting as the instrument.
   - Three or more fix attempts have failed with no new signal between them.
 
-**Do not use** it for one-shot mechanical edits (renames, copy changes, config bumps) where existing CI already proves correctness. Do not use it when a Loop Card already exists for this outcome; reuse that card and update the baseline instead.
+**Do not use** it for one-shot mechanical edits (renames, copy changes, config bumps) where existing CI already proves correctness. Do not use it when a Loop Card already exists for this outcome; reuse that card and update the baseline instead. Do not force a loop onto [build-mode](../../docs/modes.md) work: a large new prototype often has no signal to climb yet. File issues, run them in parallel with `autonomous-delivery`, and come back here once there's something real to measure.
 
 ## Steps
 
