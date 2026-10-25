@@ -82,7 +82,9 @@ A frequent lane that runs [`pr-shepherd`](../pr-shepherd/SKILL.md) across every 
 
 ## Running it
 
-**Locally (Copilot CLI):** one terminal per lane. Use `/goal` for the producer's target and `/every` for each lane's cadence, for example producer report `/every 30m`, packager `/every 3h` and shepherd `/every 20m`. Put the terminals on a machine that stays awake (a dev box or VM), not a laptop that sleeps.
+**Copilot CLI:** one terminal per lane. Use `/goal` for the producer's target and `/every` for each lane's cadence, for example producer report `/every 30m`, packager `/every 3h` and shepherd `/every 20m`. Put the terminals on a machine that stays awake (a dev box or VM), not a laptop that sleeps.
+
+**Copilot app:** one session per lane. `/goal` works the same way. There's no `/every`; give each lane a session automation with the same cadence and prompt instead. It wakes the same session, so the lane keeps its context and checkpoint between runs.
 
 **In the cloud:** the packager and shepherd are good [`automate-it`](../automate-it/SKILL.md) candidates. They are scheduled, bounded and repeatable. Keep the producer as a long-running session that you check in on.
 
