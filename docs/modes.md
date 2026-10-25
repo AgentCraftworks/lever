@@ -23,10 +23,10 @@ Skills: `brief`, `keep-the-pool-full`, `autonomous-delivery`, `landing-plan`, `p
 
 There is a signal, and the agent can read it without you. The job is to make the signal trustworthy (noise floor, paired control), then let the agent climb it. When you're the one pasting screenshots or asking "is it faster now?", you're the test runner. Run `find-the-loop`.
 
-Loops also run as standing lanes:
-- **Log or performance audit:** read production logs or metrics on a schedule, compare them to a baseline, and file one issue with evidence only when something regressed.
-- **Parity audit:** after a UI change, compare affected journeys against reference behavior and file the gaps.
-- **CI speed:** the [`ci-speed`](../automations/ci-speed/) recipe.
+Loops also run as standing lanes in the cloud. The shape: a read-only auditor wakes, checks a watermark, audits one slice against a baseline, files at most a few issues with evidence, and hands them to a separate fix chain.
+- **Parity audit** ([`audit-lane`](../automations/audit-lane/)): compare your UI source with a reference implementation, one surface per run. In one project, about 175 issues were filed and about 97% fixed, most the same day, with under 1% false positives.
+- **Log or performance audit** ([`audit-lane`](../automations/audit-lane/)): compare a recent window of production logs to a trailing baseline. In the same project, about half of the issues were fixed and about 1 in 5 was noise. A sharper signal gives a better loop.
+- **CI speed** ([`ci-speed`](../automations/ci-speed/)): a cheap daily watch files a goal, and the goal wakes an experiment lane.
 
 Skills: `find-the-loop`, `experiment-arms`, `cross-model-review`.
 
