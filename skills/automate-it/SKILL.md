@@ -1,7 +1,7 @@
 ---
 name: automate-it
 user-invocable: false
-description: Turns a task you keep doing by hand into a paused GitHub Copilot Automation with an event trigger, a least-privilege tool list, a PARAMETERS + CONTRACT prompt, a quiet exit and a propose-only improver sibling. Use when the same task has been done 3 or more times by hand, a local self-wake has fired 5 or more times for the same job, or the user says "automate this", "run this on every PR/issue", "do this nightly" or "make this run in the cloud".
+description: Turns a task you keep doing by hand into a paused GitHub Copilot Automation with an event trigger, a least-privilege tool list, a PARAMETERS + CONTRACT prompt, a quiet exit and a propose-only improver sibling. It creates automations, so it runs only on `/lever automate` or an explicit ask ("automate this", "run this on every PR/issue", "do this nightly", "make this run in the cloud"). When the same task has been done 3 or more times by hand, or a local self-wake has fired 5 or more times for the same job, suggest it in one line instead of running it.
 ---
 
 # automate-it
@@ -49,7 +49,7 @@ Repeatable work belongs in the cloud, on an event, with nobody babysitting it. T
 | Wake filter | Exclude self-actor and self-pushed SHAs | Include (only for loop-safe, capped jobs) |
 | Model tier | Standard tier | Premium tier costs about 15× per call. Record why in the description; let the improver re-test the choice |
 | Write scope | `trigger` (only the resource that fired) | `repository` (digests, tracking issues, ledgers) |
-| Autonomy level (`AUTONOMY`) | L0 at creation; each recipe states its target | Up to L5 per [docs/autonomy.md](../../docs/autonomy.md), capped by repo rules; the tool list enforces it |
+| Autonomy level (`AUTONOMY`) | The level the recipe states, never above the repo default; L0 if the recipe doesn't say | Up to L5 per [docs/autonomy.md](../../docs/autonomy.md), capped by repo rules; the tool list enforces it |
 | Writes per run | 1 | Integer; plus open-automation-PR cap (5) |
 | Evidence budget | 3 items assessed, 10 logs read, 20 records scanned | Integers |
 | API budget | 75 REST calls per useful output, shared across automations | Integer; see `run-health-review` |

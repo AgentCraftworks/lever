@@ -2,7 +2,7 @@
 
 **Purpose.** Drive opted-in PRs to landed without anyone babysitting them: green on the exact head SHA, every review thread dispositioned, landed at the autonomy level you set. This is the cloud form of [skills/pr-shepherd](../../skills/pr-shepherd/SKILL.md); both use the same contract, so a manual run and an automated run behave the same.
 
-It replaces the loop people hand-type as "monitor CI and push fixes until green, then merge" and the 20-minute self-wakes that poll for it.
+It's the loop people hand-type as "monitor CI and push fixes until green, then merge" and the 20-minute self-wakes that poll for it.
 
 ## Triggers
 

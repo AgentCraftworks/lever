@@ -66,7 +66,7 @@ No push, no approve, no request-changes, no merge, no issue writes. The contract
 ```
 
 4. Verify with `get_automation`: exactly 8 tools, the `-is:draft` queries present, `disabled: true`.
-5. Dry run on 3 merged PRs (`event: pull_request_ready_for_review`, `resource_url: <PR>`): one that later needed a bug-fix follow-up, one clean, one large refactor. Expect a finding on the first, silence on the second, and at most two findings on the third. Each posted finding must carry its proof table.
+5. Dry run with `MODE: dry_run`, which is a read-only replay: it accepts merged PRs, reviews the head they merged at, and posts nothing. Run it on 3 merged PRs (`event: pull_request_ready_for_review`, `resource_url: <PR>`): one that later needed a bug-fix follow-up, one clean, one large refactor. Expect a finding on the first, silence on the second, and at most two findings on the third. Each finding in the record must carry its proof table.
 6. Enable on approval with `MODE: act`.
 7. Create the improver from [improver-prompt.md](improver-prompt.md), paused, with the tools and triggers below. Enable it after the reviewer has about 20 PRs of output.
 

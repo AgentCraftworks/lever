@@ -63,7 +63,7 @@ YOU     tune lever to how you work
 
 1. **Parse.** If the first word is a verb above, run that verb with the rest as its argument, verbatim. Accept the full skill name too (`/lever find-the-loop …` = `/lever loop …`). Don't ask a question the repo, open PRs, CI history or the session can answer.
 2. **No verb? Route.** Pick one row from the routes table. If two fit, take the earlier row: loops come before building, because a build with no signal is guesswork. Say the pick in one line, as the command they could have typed: "That's a Loop problem. Running `/lever loop`, then `/lever arms`." If nothing fits, ask one question with 2–4 choices.
-3. **Load the dials.** Before any verb that pushes, opens PRs or merges, read the effective autonomy and spend (see "Your dials"). State them in one line if they matter for this run: `L2 here (you: L4 · repo cap: L2)`.
+3. **Load the dials.** Before **every** verb, resolve the spend tier and budget: your tier from `~/.copilot/lever.yml`, capped by `budgets:` and `spend.daily_cap_usd` in the repo's `.github/lever.yml` ([`docs/spend.md`](../../docs/spend.md)). Pass that one budget to the skill. Its own defaults (lanes, arms, paired runs, sweeps) only apply inside it. Before any verb that pushes, opens PRs or merges, also resolve the effective autonomy (see "Your dials"). State them in one line if they matter for this run: `L2 here (you: L4 · repo cap: L2) · standard, 75 API calls/PR`.
 4. **Run the skill.** Read its `SKILL.md` and follow it. Never run more than one verb in parallel from here.
 
 ## Routes
@@ -87,12 +87,11 @@ YOU     tune lever to how you work
 
 Your dials live in `~/.copilot/lever.yml` (shape: [`config/personal.example.yml`](../../config/personal.example.yml)). They follow you across repos and sessions. Change them whenever you like: the history keeps every change.
 
-The effective autonomy level for a run is the lowest of:
-1. what you asked for: the run's own words ("then merge", "hand off"), else your dial for this repo, else your default;
-2. the repo's `.github/lever.yml` cap: `max`, `paths`, `freeze` (shape: [`config/autonomy.example.yml`](../../config/autonomy.example.yml));
-3. what GitHub actually enforces for this identity: rulesets, required reviews, CODEOWNERS.
+One rule, everywhere:
+- **Requested** = your latest explicit statement: your dial file, the kickoff ("then merge", "hand off") or a chat message, whichever is newest. No statement at all: the repo's `default`, else L2.
+- **Effective** = min(requested, the repo's `.github/lever.yml` caps (`max`, `paths`, `freeze`; shape: [`config/autonomy.example.yml`](../../config/autonomy.example.yml)), what GitHub enforces for this identity (rulesets, required reviews, CODEOWNERS)).
 
-Your dial never exceeds the repo or GitHub. The repo never raises your dial. The full resolution is in [`autonomy-dial`](../autonomy-dial/).
+Class grants in `.github/lever.yml` go through the same min. They never raise your dial. Automations have no "you": only their PARAMETERS count, and comments never raise anything. The full procedure is in [`autonomy-dial`](../autonomy-dial/).
 
 **`/lever autonomy`** with no args prints the effective level here and why, one line per layer.
 

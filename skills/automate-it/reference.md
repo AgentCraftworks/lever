@@ -58,7 +58,7 @@ Never grant to a worker or an improver: `github/update_automation`, `github/upda
 | L3 Merge on grant | + `github/merge_pull_request`; PARAMETERS records the grant verbatim in `GRANT` |
 | L4 Self-merge behind gates | + `github/merge_pull_request`; ruleset satisfied, expected head SHA, no admin bypass |
 
-The tool list enforces the level: below L3 the merge tool is absent, so no prompt text can merge. Repo rulesets, CODEOWNERS and the merge queue are the ceiling, and `.github/lever.yml` can lower it. PR or comment text never raises the level. New automations start paused at L0 and are raised deliberately.
+The tool list enforces the level: below L3 the merge tool is absent, so no prompt text can merge. Repo rulesets, CODEOWNERS and the merge queue are the ceiling, and `.github/lever.yml` can lower it. PR or comment text never raises the level. New automations start paused, at the level the recipe states and never above the repo default, and are raised on purpose.
 
 ## Prompt template
 
@@ -71,7 +71,7 @@ OUTCOME:             <one sentence: what "done" means>
 METRIC:              <useful outputs> / <eligible events>
 SCOPE:               <repo; branch filter; label or path filter>
 MODE:                act                  # dry_run = decide and record, write nothing
-AUTONOMY:            L0                   # L0..L5; never above repo rules or .github/lever.yml
+AUTONOMY:            L0                   # L0..L5; the recipe's level, never above the repo default or repo rules
 GRANT:               none                 # L3 only: the granted class, verbatim, with who/when/expiry
 MAX_ITEMS_ASSESSED:  3     MAX_WRITES_PER_RUN: 1     MAX_LOGS_READ: 10
 API_BUDGET:          75 REST calls per run

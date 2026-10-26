@@ -8,13 +8,13 @@ Send this as one message, and leave out any line the prompt already answered:
 
 > Before I start, choose a preset or override any line (defaults shown):
 > - **Preset:** pair / overnight / unattended. Default: overnight, because you said "while I sleep".
-> - **Who lands it:** me via hand-off (L2), me when green (L4), or me plus release (L5)? The repo ceiling is L4.
+> - **Who lands it:** your dial says L2 (hand-off). Want me to land when green (L4) or land plus release (L5) for this run? The repo ceiling is L4.
 > - **Absence window:** until 08:30 your time?
 > - **Lanes:** 3–5. When I run out, I'll draw from: flaky tests, an audit against the reference, error-log triage. Change anything?
-> - **Budget:** at most 75 API calls per merged PR. I'll stop and report at 80% of the CI-minute cap.
+> - **Budget:** at most 75 API calls per merged PR (from `.github/lever.yml`). I'll stop and report at 80% of the CI-minute cap.
 > - **Questions for you:** queued for the morning report unless something is unsafe.
 
-If you get no answer within one turn in `overnight` or `unattended` mode, take the preset defaults, record `source: preset default` for each one, and start.
+If you get no answer within one turn in `overnight` or `unattended` mode, take the preset's pacing defaults and keep the operator's existing autonomy and spend dials. Without an explicit merge grant, use at most L2. A preset never raises either dial. Record `source: preset default` for each pacing line, and start. `unattended` with no finite budget doesn't start: say so and stop.
 
 ## Delegation envelope (child kickoff)
 

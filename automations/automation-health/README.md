@@ -20,6 +20,7 @@ Don't trigger it on `automation_completed`; it would run once for every run of e
 | Read automations | `github/list_automations`, `github/get_automation`, `github/list_automation_revisions`, `github/get_automation_revision` |
 | Read outcomes | `github/search_issues`, `github/search_pull_requests`, `github/issue_read`, `github/pull_request_read`, `github/actions_list` |
 | Report | `github/create_issue`, `github/add_issue_comment` |
+| State | `github/update_issue_body`, only for the `## lever state` section of `REPORT_ISSUE` |
 | Propose | `propose_automation_update` |
 
 Never `update_automation` or `delete_automation`. A human applies the proposal.
@@ -33,7 +34,7 @@ Never `update_automation` or `delete_automation`. A human applies the proposal.
 | `NOOP_ALERT` | 90% no-op over 2 weeks | Suggests narrowing a trigger. A heartbeat or sweep is expected to no-op most of the time; judge those by what they caught. |
 | `MODEL_MULTIPLIERS` | standard 1, premium 15 | Relative cost per call; premium is about 15× |
 | `API_BUDGET` | ≤ 75 REST calls per merged PR across all automations | Mirrors `budgets.github_api_calls_per_merged_pr` in `.github/lever.yml` |
-| `REPORT_ISSUE` | A pinned "Automation health" issue | Weekly summary goes here |
+| `REPORT_ISSUE` | A pinned "Automation health" issue | Weekly summary goes in comments. Its body's `## lever state` section holds failure counts and last week's prediction, rewritten every run (see [durable state](../README.md#conventions-shared-by-every-recipe)) |
 | Model tier | Standard | |
 
 ## Outcome metric
@@ -61,7 +62,7 @@ When a number can't be read, it reports "unavailable" and why. It never estimate
 
 ## Install via GitHub MCP
 
-1. Preflight: create the pinned report issue; `list_automations` to collect worker ids for the `automation_failed` trigger.
+1. Preflight: create the pinned report issue with an empty `## lever state` section (a fenced `json` block holding `{}`); `list_automations` to collect worker ids for the `automation_failed` trigger.
 2. Fill PARAMETERS in [prompt.md](prompt.md) with `MODE: dry_run`.
 3. Create paused:
 
@@ -80,7 +81,8 @@ When a number can't be read, it reports "unavailable" and why. It never estimate
   "tools": ["github/list_automations", "github/get_automation", "github/list_automation_revisions",
             "github/get_automation_revision", "github/search_issues", "github/search_pull_requests",
             "github/issue_read", "github/pull_request_read", "github/actions_list",
-            "github/create_issue", "github/add_issue_comment", "propose_automation_update"]
+            "github/create_issue", "github/add_issue_comment", "github/update_issue_body",
+            "propose_automation_update"]
 }
 ```
 

@@ -1,5 +1,6 @@
 # One read per wake. Everything pr-shepherd needs to decide, in a single call:
 #   gh api graphql -F owner=OWNER -F repo=REPO -F number=123 -F query=@pr-state.graphql
+# If either hasNextPage is true, the read is incomplete: end BLOCKED(incomplete-evidence). Never decide on a partial page.
 query PrState($owner: String!, $repo: String!, $number: Int!) {
   rateLimit { cost remaining resetAt }
   repository(owner: $owner, name: $repo) {
@@ -23,6 +24,7 @@ query PrState($owner: String!, $repo: String!, $number: Int!) {
             statusCheckRollup {
               state
               contexts(first: 100) {
+                pageInfo { hasNextPage }
                 nodes {
                   __typename
                   ... on CheckRun {
@@ -46,6 +48,7 @@ query PrState($owner: String!, $repo: String!, $number: Int!) {
         }
       }
       reviewThreads(first: 100) {
+        pageInfo { hasNextPage }
         nodes {
           id
           isResolved

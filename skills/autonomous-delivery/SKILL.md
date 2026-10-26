@@ -1,7 +1,7 @@
 ---
 name: autonomous-delivery
 user-invocable: false
-description: Runs long-lived delivery as a coordinator with parallel lanes. Sets authority and pacing dials up front, keeps lanes alive and fed, lands work through a single-writer release train, and reports status only when something changed. Use for multi-hour, overnight or ongoing "keep going" work, for work with more than about three independent streams, for "/autonomous-delivery", "run this overnight", "keep N streams going", "don't stop until it ships", or to re-arm an existing run after a restart.
+description: Runs long-lived delivery as a coordinator with parallel lanes. Sets authority and pacing dials up front, keeps lanes alive and fed, lands work through a single-writer release train, and reports status only when something changed. Runs only on `/lever deliver`, "/autonomous-delivery" or an explicit request to run multi-hour, overnight or multi-lane delivery ("run this overnight", "keep N streams going", "don't stop until it ships"), or to re-arm an existing run after a restart.
 ---
 
 # Autonomous delivery (v3)
@@ -36,25 +36,29 @@ Long-running coordinators fall behind. At session start and after any long gap:
 
 ### 1. Setup interview (once)
 
-Ask only for the dials the prompt didn't already answer, in **one** message that takes under a minute. Offer a preset. Store the answers in the ledger header ([`templates/ledger.md`](../../templates/ledger.md)). Echo the contract back in one line, for example: `Overnight preset · L4 (ceiling L4) · standard spend · 3–5 lanes · refill when idle · sweep 30m · report 08:30 PT`. When re-invoked, read the stored dials and continue without asking again.
+Ask only for the dials the prompt didn't already answer, in **one** message that takes under a minute. Offer a preset. Store the answers in the ledger header ([`templates/ledger.md`](../../templates/ledger.md)). Echo the contract back in one line, for example: `Overnight preset · L2 (your dial; ceiling L4) · standard spend · 3–5 lanes · refill when idle · sweep 30m · report 08:30 PT`. When re-invoked, read the stored dials and continue without asking again.
 
 | Dial | `pair` (you're here) | `overnight` (you're away until a set time) | `unattended` (ongoing, no end time) |
 |---|---|---|---|
-| Autonomy (requested; ceiling still applies) | L2 | L4 if the repo allows, else L2 | L4; L5 only if a release path exists |
-| [Spend](../../docs/spend.md) | standard | standard; `max` for a deadline push | lean, with premium for judgment only |
-| Lanes (min–max) | 1–3 | 3–5 | 5–8 |
+| Autonomy | your dial (unchanged) | your dial (unchanged) | your dial (unchanged) |
+| [Spend](../../docs/spend.md) | your tier | your tier; offer `max` for a deadline push | your tier, premium for judgment only |
+| Lanes (min–max), capped by your tier | 1–3 | 3–5 | 5–8 |
 | Idle policy | wait for events | refill from the backlog | refill from the backlog |
 | Liveness sweep | off (events only) | every 30 min | every 15 min |
 | Stall threshold (time since last merge) | report only | 2 h → act | 45 min in active hours → act |
 | Stuck rule | 2 h → re-plan and ask | 2 h → re-plan with a rubber duck | 2 h → re-plan with a rubber duck |
 | Status | at milestones | once, at your wake time | daily digest plus milestones |
 | Human-only questions | ask now | queue for the morning report | queue for the daily digest |
-| Budget stop | none | report at 80% | hard stop at 80% |
+| Budget stop | none | report at 80% | hard stop at 80%; won't start without a finite budget |
 | Self-edit of this skill | off | propose | propose |
 
-The autonomy level is resolved per [`docs/autonomy.md`](../../docs/autonomy.md). A preset *requests* a level. The repo ceiling, `.github/lever.yml` and you can lower it. Only you can raise it, and only up to the ceiling. If the prompt already said "then merge" or "hand off to the owning team", that is the answer. Don't ask again.
+Presets change pacing, parallelism and spend. They never change autonomy. Lane counts and sweeps stay inside your spend tier's caps ([`docs/spend.md`](../../docs/spend.md)), and a preset never switches your tier without asking.
 
-**Owner directive format.** When the operator changes direction mid-run, record it as: `outcomes (priority, label rule, cap) · workers: N · merge authority: <who> · release owner: <who> · tracking: <issue> · until: <condition>`. A newer directive supersedes older ones and any repo doc that conflicts with it. Fix the doc in a follow-up PR rather than obeying it.
+The autonomy level is resolved per [`docs/autonomy.md`](../../docs/autonomy.md): your latest explicit word (dial file, kickoff or chat), capped by `.github/lever.yml` and GitHub. If the prompt already said "then merge" or "hand off to the owning team", that is the answer. Don't ask again. Silence is not a grant. Without an explicit merge grant from you, work at L2 at most.
+
+`unattended` has no end time, so it needs a finite budget before it starts: `budgets:` in `.github/lever.yml`, a cap in your spend dial, or a number you give in the setup answer. No budget, no start. Say so in one line.
+
+**Owner directive format.** When the operator changes direction mid-run, record it as: `outcomes (priority, label rule, cap) · workers: N · merge authority: <who> · release owner: <who> · tracking: <issue> · until: <condition>`. A newer directive supersedes older ones and any repo doc that conflicts with it, except `.github/lever.yml`, rulesets and CODEOWNERS, which change only by PR. Fix a conflicting doc in a follow-up PR rather than obeying it.
 
 ### 2. Plan lanes, not documents
 
@@ -68,7 +72,7 @@ The autonomy level is resolved per [`docs/autonomy.md`](../../docs/autonomy.md).
 
 **Parallel by default.** When the user raises a new outcome mid-stream, start a new dedicated owner for it right away and keep current work moving. Don't queue independent investigations, fixes or experiments behind a release or another lane unless they really share a resource. The user should never have to say "in parallel".
 
-**Claim before you write.** Find or create a tracking issue for each outcome, labelled `lever` and assigned to the outcome owner, with lanes as sub-issues ([`docs/tracking.md`](../../docs/tracking.md)). Given `#issue`, resume from it: the brief, the lanes and the status section are the state. Write yourself into its marker as coordinator; if another coordinator checked in within 2 hours, stay read-only and say who's driving. Check assignees, linked PRs and active sessions before claiming. Assignment is not an atomic lock: if two owners claim the same thing, reconcile instead of starting a second writer.
+**Claim before you write.** Find or create a tracking issue for each outcome, labelled `lever` and assigned to the outcome owner, with lanes as sub-issues ([`docs/tracking.md`](../../docs/tracking.md)). Given `#issue`, resume from it: the brief, the lanes and the status section are the state. Write yourself into its marker as coordinator. If the marker names another coordinator, stay read-only and say who's driving. Take over only on an explicit handoff, or a stale marker per [`docs/tracking.md`](../../docs/tracking.md), and re-read the marker right before each write. If it isn't yours anymore, back off. Check assignees, linked PRs and active sessions before claiming. Assignment is not an atomic lock: if two owners claim the same thing, reconcile instead of starting a second writer.
 
 ### 3. Delegate with an envelope
 
@@ -101,9 +105,9 @@ Start from a concrete hypothesis. Inspect the evidence, make the smallest cohere
 
 ### 4. Run the loop: events first, a sweep as backstop, silent when nothing changed
 
-Handle child completions and GitHub events as they arrive: reconcile, unblock, route each merged SHA to the release owner, and start the next ready lane. When the sweep fires (`sweep_interval`), check:
+Handle child completions and GitHub events as they arrive: reconcile, unblock, route each merged SHA to the release owner, and start the next ready lane. When the sweep fires (`sweep_interval`, or a scheduled `/lever deliver #<issue>`), check the marker is still yours, then:
 
-1. **Liveness, recursively.** Find every descendant that is interrupted or idle with unfinished work and **rekick it automatically**. The rekick message carries what changed and what's expected, never a bare "continue". The user should never have to ask for this. If a child doesn't move after two rekicks, apply the takeover protocol (step 9). If your host can resume children natively, use that; if it can't, file the gap as a product bug rather than writing more prompt. Judge liveness by the last turn or tool timestamp, not by a busy flag. A session can show busy with no turn running. **If you deploy the platform you run on, resuming yourself and your children is the last step of the deploy**, not something the human notices later.
+1. **Liveness, recursively.** Find every descendant that is interrupted or idle with unfinished work and **rekick it automatically**. The rekick message carries what changed and what's expected, never a bare "continue". The user should never have to ask for this. If a child doesn't move after two rekicks, apply the takeover protocol (step 9). If your host can resume children natively, use that; if it can't, file the gap as a product bug rather than writing more prompt. Judge liveness by the last turn or tool timestamp, not by a busy flag. A session can show busy with no turn running. **If a deploy or restart takes down the host your sessions run on, resuming yourself and your children is the last step of that deploy**, not something the human notices later.
 2. **Watchdog metric: time since last merge.** Compare it to `stall_threshold`. If it's over, name the binding constraint (empty backlog, CI, review, quota, permission, a stuck lane) and act on it.
 3. **Green but not landed.** Hand each such PR to `pr-shepherd`.
 4. **Lane count below the minimum.** Refill (step 6).
@@ -224,7 +228,7 @@ Rules:
 | `absence_window` | none | until a time, N hours, or indefinite |
 | `status` | milestones; your timezone | cadence, horizon, channel |
 | `human_questions` | ask now | ask now, queue for the next report |
-| `budget` | from `config/autonomy.example.yml` | API calls per merged PR, CI minutes, credits; stop at a percentage |
+| `budget` | `budgets:` in your repo's `.github/lever.yml`, then your spend tier | API calls per merged PR, CI minutes, credits; stop at a percentage. Required for `unattended` |
 | `release` | none | none, train (single writer), per merge |
 | `self_edit` | off | off, propose, commit (through the level) |
 

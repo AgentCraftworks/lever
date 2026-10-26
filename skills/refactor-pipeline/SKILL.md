@@ -1,7 +1,7 @@
 ---
 name: refactor-pipeline
 user-invocable: false
-description: Runs a huge, mechanical refactor (crate or package splits, module extraction, API migrations, dead-code removal) as three independent lanes, producer, packager and shepherd, that coordinate only through git and a PR stack. Use when someone says "split this crate", "break up this monolith", "this module is huge, cut it down", "migrate every caller", or when a refactor is too big to review as one PR and too tedious to babysit.
+description: Runs a huge, mechanical refactor (crate or package splits, module extraction, API migrations, dead-code removal) as three independent lanes, producer, packager and shepherd, that coordinate only through git and a PR stack. It pushes branches and opens PRs, so it runs only on `/lever refactor` or an explicit ask ("split this crate", "break up this monolith", "this module is huge, cut it down", "migrate every caller").
 ---
 
 # Refactor pipeline
@@ -59,8 +59,9 @@ Rules the producer must follow:
 
 A scheduled lane that turns raw commits into a reviewable stack.
 
-- **Checkpoint, don't remember.** Save the last source commit you processed. Every run starts with a diff: "Processed 8 new commits through `5bf1e1f`", or "No new commits since `d3137f5`. Nothing to do." The second answer is silent.
-- Rebase new commits onto the top of the stack, run the tests, and fold fixups into the commit they belong to.
+- **Checkpoint, don't remember.** Save the last source commit you processed, plus a stable identity for every commit you've packaged: its `git patch-id --stable`, or a `Change-Id:` trailer if the producer writes one. Every run starts with a diff: "Processed 8 new commits through `5bf1e1f`", or "No new commits since `d3137f5`. Nothing to do." The second answer is silent.
+- **Reconcile after the producer's rebase.** If the source branch moved non-fast-forward, the old checkpoint may not be an ancestor anymore, and packaged commits have new SHAs. Don't diff from the checkpoint. Match source commits to packaged ones by patch-id or Change-Id, skip what's already packaged, and package only the rest. A commit whose patch changed in the rebase gets flagged, not packaged twice.
+- Rebase new commits onto the top of the stack, run the tests, and fold fixups into commits that aren't in a PR yet. The packager only appends PRs on top. It never rewrites a PR that's already in the stack.
 - Size each PR for a human reviewer, for example **under 2,000 changed lines, excluding pure moves**. Add PRs to the stack with the repo's stacking tool (for example `gh stack`).
 - Cadence follows batch size. Start at every few hours. If runs keep finding only a commit or two, slow it down.
 
@@ -69,9 +70,10 @@ A scheduled lane that turns raw commits into a reviewable stack.
 A frequent lane that runs [`pr-shepherd`](../pr-shepherd/SKILL.md) across every PR in the stack.
 
 - **Rediscover stack membership on every run.** Another lane is adding PRs, and merges restack it.
+- **The shepherd is the only lane that rewrites the stack.** Restacks, conflict rebases and fixups to PRs already in the stack all go through it. The packager sends it a note instead of pushing.
 - **Check mergeability against the real target.** A stacked PR can say "no conflicts" against its stacked base and still conflict with `main` once the PRs below it merge. Verify with `git merge-tree` against the branch it will actually land on.
 - **On conflict, push the rebase immediately, then verify.** A stale PR that's waiting on local validation blocks everyone above it. CI on the pushed head is the real check.
-- **Stay armed.** A green stack is a checkpoint, not a finish line. Stop only when a human says stop.
+- **Stay armed, within budget.** A green stack is a checkpoint, not a finish line. Keep going until the stack is merged, a human says stop, the budget runs out, or 6 ticks in a row did nothing. Then post one line saying which, and stop the schedule.
 - Rerun a red check only after showing that the stack didn't cause it.
 
 ## Shared rules
@@ -98,7 +100,7 @@ A frequent lane that runs [`pr-shepherd`](../pr-shepherd/SKILL.md) across every 
 | `cadence` | producer report 30 m · packager 3 h · shepherd 20 m · producer rebase 24 h | each lane runs at the speed of what it watches |
 | `autonomy` | shepherd L2 (keeps green, human merges) | see [`docs/autonomy.md`](../../docs/autonomy.md) |
 | `api_budget` | ≤ 1 poll per PR per 10 min | shared across all lanes |
-| `spend` | `standard` | a multi-day run makes thousands of model calls; prompt caching matters a lot |
+| `spend` | your tier and budget, from `/lever` | a multi-day run makes thousands of model calls; prompt caching matters a lot |
 
 ## What good looks like
 

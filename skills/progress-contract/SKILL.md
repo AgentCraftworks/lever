@@ -33,7 +33,9 @@ A status record counts only after you have **read it back**. Write the artifact,
 
 ## `/lever status` with no args
 
-List what lever is running for the user: `is:open label:lever assignee:@me` in this repo and every repo with a dial in `~/.copilot/lever.yml`. Print `lever:needs-you` items first, each with its one question and a recommended answer. Then one line per issue: outcome, lanes done/total, weakest evidence level, last check, runner. A check older than 2 hours is flagged as stalled. Given `#issue`, print that issue's digest. See [`docs/tracking.md`](../../docs/tracking.md).
+List what lever is running for the user: `is:open label:lever assignee:@me` in this repo and every repo with a dial in `~/.copilot/lever.yml`. Print `lever:needs-you` items first, each with its one question and a recommended answer. Then one line per issue: outcome, lanes done/total, weakest evidence level, last check, runner. A check older than 2 hours, or a workflow run waiting for approval, is flagged as stalled. Given `#issue`, print that issue's digest. See [`docs/tracking.md`](../../docs/tracking.md).
+
+`/lever status` is read-only. It never merges, rekicks, refills, edits the issue or schedules anything. For a stall, it prints the command that acts on it, usually `/lever deliver #<issue>`.
 
 When a run is tracked on an issue, the digest goes in the issue's `## Status` section, edited in place. Comment only for a milestone, a `needs-you` question (add the `lever:needs-you` label) or the final done-audit.
 
@@ -57,13 +59,13 @@ When a run is tracked on an issue, the digest goes in the issue's `## Status` se
    - **Needs you:** at most one question, with a recommended answer, or "nothing".
 
    Every human-only item is surfaced once. Don't repeat it unless something about it changed.
-5. **Run the watchdog.** Track time since last merge (or since the last evidence advance, for work that doesn't merge). When it passes the stall threshold during active work, act before reporting:
-   - resume or rekick stalled workers;
-   - land verified-green PRs if `autonomy-dial`'s `may_merge` allows it;
-   - refill an empty queue;
-   - if one outcome has had no meaningful progress for the stuck threshold, write a simpler plan, get a second-model critique and pick one.
+5. **Run the watchdog.** Track time since last merge (or since the last evidence advance, for work that doesn't merge). When it passes the stall threshold during active work, the run that owns the work acts before reporting. In a `deliver` run, that's its sweep ([`autonomous-delivery`](../autonomous-delivery/SKILL.md) step 4), which:
+   - resumes or rekicks stalled workers;
+   - hands verified-green PRs to `pr-shepherd`, which lands them if `autonomy-dial`'s `may_merge` allows it;
+   - refills an empty queue;
+   - re-plans an outcome stuck past the stuck threshold: a simpler plan, a second-model critique, pick one.
 
-   Then report what you did. Don't report an alarm and wait.
+   Then report what it did. Don't report an alarm and wait. A bare `/lever status` only reports the stall and the command to fix it.
 6. **Treat any human status ask as a miss.** Answer it plainly in the fixed shape. Then tighten the contract one step: raise the cadence, add the field they asked about, or move the report where they will see it. Log what was missing.
 7. **Keep an ETA accuracy log.** For each milestone, record the forecast at kickoff, each revision with its reason, and the actual time. Report the error and its direction, early (sandbagging) or late (optimism), at the end of the run and whenever the bias is systematic. Use the log to calibrate the next forecast. If the projection slips more than one checkpoint, re-plan from the objective: cut scope, add parallelism or escalate. Don't silently extend.
 8. **Run the done-audit before declaring done.** Re-read the original ask (verbatim) and the brief's done-when. For each criterion and milestone:

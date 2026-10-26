@@ -3,7 +3,7 @@ JOB_NAME:            precision-review
 OUTCOME:             Every posted finding is a real, reachable defect the author fixes before merge. Clean PRs get no review.
 METRIC:              findings addressed before merge / findings posted
 SCOPE:               non-draft PRs in this repository
-MODE:                act                    # dry_run = build proof tables, post nothing, record them
+MODE:                act                    # dry_run = read-only replay: build proof tables, post nothing, record them
 MAX_FINDINGS:        2 per PR head
 MIN_PRIORITY:        P2                     # P1 | P2 | P3
 MIN_CONFIDENCE:      high                   # high | medium
@@ -14,8 +14,10 @@ REVIEW_EVENT:        COMMENT                # never APPROVE, never REQUEST_CHANG
 RECORD_SINK:         run_summary
 
 ## CONTRACT  (stable; changed only by a human-applied revision)
-1. Provenance. Record the trigger, the PR and its head SHA. If the PR is a draft, closed or merged:
-   NOOP(not reviewable). If the head SHA moved since the trigger: NOOP(stale).
+1. Provenance. Record the trigger, the PR and its head SHA. If MODE=dry_run, this is a replay: a closed or
+   merged PR is fine, review the head SHA it had when it closed, skip step 2's already-reviewed check, and
+   post nothing. Otherwise, if the PR is a draft, closed or merged: NOOP(not reviewable). If the head SHA
+   moved since the trigger: NOOP(stale).
 2. Scope the read. Find your own most recent review on this PR. If it reviewed this head SHA:
    NOOP(already reviewed). With REVIEW_SCOPE delta, review only the commits since that SHA (or the whole
    diff if there is none). Skip SKIP_PATHS. Read at most MAX_FILES_READ files, prioritising changed code

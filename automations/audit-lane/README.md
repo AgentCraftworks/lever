@@ -24,7 +24,7 @@ The difference is the signal. A source diff with `file:line` on both sides is cl
 
 ## Contract highlights
 
-- **Watermark first.** If no input moved since the last run, write a run record and stay silent.
+- **Watermark first.** The watermark and rotation live in a `## lever state` section of one pinned issue's body (see [durable state](../README.md#conventions-shared-by-every-recipe)). Every run reads it first and rewrites it last. If no input moved, the run updates state and stays silent.
 - **Cap the output:** at most 2–3 new issues per run (and a few comments). The fix chain's capacity is the limit, not the auditor's.
 - **Dedup:** search open issues and PRs first. Update an existing issue instead of filing a new one. Skip a finding when an open PR already touches those files.
 - **Read-only:** use a read-only, narrowly scoped identity. Never paste secrets or raw log lines into issues; use aggregates and redacted examples.
@@ -61,7 +61,7 @@ The difference is the signal. A source diff with `file:line` on both sides is cl
 ## Install via GitHub MCP
 
 1. Run [`automate-it`](../../skills/automate-it/SKILL.md). Fill PARAMETERS in [prompt.md](prompt.md) with `MODE: dry_run`.
-2. Create it paused, with an `interval` trigger and read tools plus `github/create_issue`, `github/add_issue_comment` and `github/update_issue`. Give it no write tools for code.
+2. Create the pinned state issue with an empty `## lever state` section and set `STATE_ISSUE`. Create the automation paused, with an `interval` trigger (`write_scope: repository`, since there's no triggering resource) and read tools plus `github/create_issue`, `github/add_issue_comment` and `github/update_issue_body` (for the state section and existing audit issues only). Give it no write tools for code.
 3. Dry-run 3 slices. Check every finding by hand against the evidence.
 4. Enable on approval. Make sure the fix chain picks up the audit label: [`keep-the-pool-full`](../../skills/keep-the-pool-full/), an implementer lane, or `autonomous-delivery`.
 5. Pair it with an [improver](../improver/README.md): `GOOD_OUTCOME: issue fixed`, `BAD_OUTCOME: closed not planned`.

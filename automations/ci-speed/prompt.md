@@ -11,8 +11,8 @@ TARGET_P90_MIN:        <from baseline>
 TARGET_FIRST_TRY_PASS: <from baseline>%
 MEASURE_WINDOW:        last 7 days, busy weekday hours only
 KEEP_BAR:              critical path -1 min, or a clear cost or flake cut
-RUNS_PER_ARM:          4-6 paired on the same SHA
-MAX_CONCURRENT_ARMS:   4
+RUNS_PER_ARM:          6 paired on the same SHA             # under 6 complete pairs = INCONCLUSIVE
+MAX_CONCURRENT_ARMS:   4                                   # never above budgets.max_parallel_arms in .github/lever.yml
 MAX_OPEN_PRS:          8
 CI_MINUTES_PER_GOAL:   <cap>
 API_RATE_FLOOR:        20% of the hourly core quota
@@ -34,16 +34,20 @@ Every run ends in exactly one of ACTED(summary), NOOP(reason) or BLOCKED(reason)
 4. Otherwise, if an open GOAL_LABEL issue exists, comment only when a number moved by more than 10%. Never
    open a second goal issue.
 5. Otherwise open one goal issue: the missed metric, its baseline, the critical path with its slowest
-   steps, the top 3 flake signatures, and a suggested hypothesis list. Label it GOAL_LABEL.
+   steps, the top 3 flake signatures, and a suggested hypothesis list. Then add GOAL_LABEL with
+   github/update_issue_labels. That label event is what wakes the lane.
 
 ### ROLE: lane
-1. Provenance. The subject is the triggering GOAL_LABEL issue. If another run owns an open goal: NOOP(owned).
+1. Provenance. The subject is the triggering GOAL_LABEL issue. If it's closed, or this goal or another open
+   goal already has a lane run recorded in its body: NOOP(owned). Otherwise write "lane: <run link>" into
+   the goal body with github/update_issue_body before doing anything else.
 2. Read the goal and the record of earlier arms on this repo, including the negative ones. Never re-run a
    rejected arm without new evidence.
 3. Write the keep bar into the goal issue before measuring anything.
 4. For each hypothesis, up to MAX_CONCURRENT_ARMS at once and inside RUN_WINDOW: open one do-not-merge PR
    with one change. Run RUNS_PER_ARM paired runs against a control on the same SHA, interleaved. Check
-   that test counts and verdicts match the control. Pause when the API quota drops below API_RATE_FLOOR.
+   that test counts and verdicts match the control. A failed or missing treatment run counts against the
+   arm. Under 6 complete pairs the arm is INCONCLUSIVE, not kept. Pause when the API quota drops below API_RATE_FLOOR.
    Stop at CI_MINUTES_PER_GOAL.
 5. Keep an arm only if it clears KEEP_BAR. Record every arm, kept or rejected, with its numbers in the
    goal issue. Close rejected arms with a "[negative result]" comment.

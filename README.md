@@ -8,6 +8,24 @@ lever is a set of [agent skills](https://docs.github.com/copilot) for GitHub Cop
 
 The lesson behind most of them: the biggest wins came from **building a trustworthy feedback loop first** and then letting agents iterate against it. The biggest wastes came when the human *was* the loop: pasting screenshots, eyeballing frame rates, watching CI overnight, hand-editing an automation's prompt.
 
+## Quick start
+
+```bash
+git clone https://github.com/github/lever ~/.copilot/lever
+mkdir -p ~/.copilot/skills
+ln -s ~/.copilot/lever/skills/* ~/.copilot/skills/
+# skills link to ../../docs, templates, config and automations, so give those a home too
+for d in docs templates config automations; do ln -s ~/.copilot/lever/$d ~/.copilot/$d; done
+```
+
+Start a new Copilot session so it picks up the skills, then try one that only reads:
+
+```text
+/lever loop our test suite feels slow. just the card, don't change anything
+```
+
+You get a Loop Card: the metric, how to measure it, the noise floor and a keep bar. Nothing gets pushed, filed or merged. When you're ready for more, `/lever setup` sets your dials (start at L2: agents get PRs green, you merge).
+
 ## Where it came from
 
 lever grew out of the [autonomous-delivery skill](https://gist.github.com/EvanBoyle/8c1a97f682d92dab8c09d0e1ea73f4a0): a coordinator that keeps parallel work moving, lands it and keeps improving how it's organized. Running that skill for weeks showed which parts really carried the weight. Those parts are now the separate skills here: the loop, the brief, the dial, the status contract, the review, and moving lanes into the cloud. [`autonomous-delivery`](skills/autonomous-delivery/) is still the top-level orchestrator that ties them together.
@@ -82,7 +100,7 @@ YOU     tune lever to how you work
   help [verb]                    this list, or one verb in detail
 ```
 
-Each verb is a skill in [`skills/`](skills/). The `/` menu shows only `/lever`. The rest stay out of the way, and Copilot still loads them on its own when your ask fits.
+Each verb is a skill in [`skills/`](skills/). The `/` menu shows only `/lever`. Skills that only read and advise, like `loop`, can still load on their own when your ask fits. Anything that pushes, files, opens PRs or schedules runs waits for `/lever <verb>` or an explicit ask.
 
 ## Try it
 
@@ -117,11 +135,18 @@ More in the **[examples gallery](docs/examples.md)**: a Loop Card, experiment ar
 ```bash
 # All skills, for your user (Copilot CLI / app)
 git clone https://github.com/github/lever ~/.copilot/lever
+mkdir -p ~/.copilot/skills
 ln -s ~/.copilot/lever/skills/* ~/.copilot/skills/
+# skills link to ../../docs, templates, config and automations, so give those a home too
+for d in docs templates config automations; do ln -s ~/.copilot/lever/$d ~/.copilot/$d; done
 
-# Or per repo
-mkdir -p .github/skills && cp -r path/to/lever/skills/find-the-loop .github/skills/
+# Or per repo: every skill (including the /lever router), plus the folders their links point at
+mkdir -p .github/skills
+cp -r path/to/lever/skills/* .github/skills/
+cp -r path/to/lever/{docs,templates,config,automations} .github/
 ```
+
+Skills link to `../../docs/...`, so `docs/`, `templates/`, `config/` and `automations/` have to sit two levels above each skill. Copy one skill on its own and its links break.
 
 Then run `/lever setup`. It asks three questions and writes your dials to `~/.copilot/lever.yml` ([example](config/personal.example.yml)). For a team, copy [`config/autonomy.example.yml`](config/autonomy.example.yml) to `.github/lever.yml` to cap levels and set budgets for the repo.
 
@@ -133,9 +158,9 @@ lever is a starting point, not a doctrine. The skills hold the patterns that kep
 
 ## What the data said (a few numbers)
 
-- **Experiment arms:** 79 do-not-merge experiment PRs led to 27 kept changes. CI p50 time-to-green fell 43% (p90 −45%) in about a day and a half. Ideas that lost were kept as `[negative result]` PRs.
+- **Experiment arms:** 79 do-not-merge experiment PRs led to 27 kept changes across two repos. CI p50 time-to-green fell 43% in one repo and 34% in the other, in about a day and a half. Ideas that lost were kept as `[negative result]` PRs.
 - **Corrections that stick:** agents replied "You're right" 75 times and kept making the same mistakes. Turning ~200 of those corrections into a skill cut repeat nudges from 27 to 0 and invented-approval language from 31% to 3%.
-- **Loops replace eyeballs:** pasted screenshots fell from ~49 a month to ~0 once agents could run the instrument themselves.
+- **Loops beat eyeballs:** pasted screenshots fell from ~49 a month to ~0 once agents could run the instrument themselves.
 - **Automations:** one morning-status prompt was typed by hand 28 days in a row before it became an automation. Review automations had 46–49 tools; about 8 were needed.
 - **The human's share:** in unattended weeks, the human typed roughly 3–5% of turns. The job moved to setting direction, budgets and autonomy.
 
@@ -154,7 +179,7 @@ Rough ranges from the data behind these skills, so you can calibrate what to aim
 | Time to merge as volume rises | grows | **roughly halves** |
 | Cost of a per-push trigger with no draft filter | — | **~2–3× runs per PR** |
 | Cost of a premium model tier | 1× | **~10–15× per call**; make it a visible dial |
-| CI time-to-green from experiment arms | — | **−30% to −45%** at p50, in **1–2 days** |
+| CI time-to-green from experiment arms | — | p50 **−43%** in one repo, **−34%** in the other, in **1–2 days** |
 
 The human's job shifts from writing code to **filling the queue, setting budgets and diagnosing stalls**. None of that needs a special system. It needs the loops in this repo, a dial you trust, and automations that improve themselves under your approval.
 

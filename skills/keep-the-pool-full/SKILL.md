@@ -1,7 +1,7 @@
 ---
 name: keep-the-pool-full
 user-invocable: false
-description: Backlog steward that keeps a pool of ready, independently mergeable issues above a target by mining real sources (failing tests, TODOs, gaps, audits, user reports), deduplicating, sizing and labeling them ready. Use when unattended agents run out of work, the ready pool drops below its target, the user says "file more issues", "keep them busy", "fill the backlog" or "we have nothing to do", or on a daily schedule while a delivery loop is running.
+description: Backlog steward that keeps a pool of ready, independently mergeable issues above a target by mining real sources (failing tests, TODOs, gaps, audits, user reports), deduplicating, sizing and labeling them ready. It files issues, so it runs only on `/lever backlog`, inside a delivery run whose idle policy is refill, on a schedule the user set up, or on an explicit ask ("file more issues", "keep them busy", "fill the backlog", "we have nothing to do").
 ---
 
 # keep-the-pool-full

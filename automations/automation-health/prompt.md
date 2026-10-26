@@ -11,17 +11,23 @@ REPEAT_THRESHOLD:    3 identical failures in 24 hours
 NOOP_ALERT:          0.90 over 2 windows    # sweeps and heartbeats are judged by what they caught instead
 MODEL_MULTIPLIERS:   standard=1, premium=15
 API_BUDGET:          75 REST calls per merged PR, all automations combined
-REPORT_ISSUE:        <number of a pinned "Automation health" issue>
+REPORT_ISSUE:        <number of a pinned "Automation health" issue; its body holds the state>
 USEFUL_OUTPUT:       per automation, as stated in its own OUTCOME/METRIC lines; if absent, "a write a human did not undo"
 RECORD_SINK:         run_summary
 
 ## CONTRACT  (stable; changed only by a human-applied revision)
+0. State. Read the fenced JSON under "## lever state" in REPORT_ISSUE's body:
+   {"failures":[{"automation","reason","at"}], "last_metric", "last_proposal", "last_prediction",
+    "filed":{"<automation>:<reason>":"<issue number>"}}. Missing or unparseable: start empty and say so.
+   Every run, silent ones included, ends by rewriting that block with github/update_issue_body, leaving the
+   rest of the body alone. Drop failures older than 7 days. If MODE=dry_run, print the new block instead.
 1. Provenance. Record the trigger.
-   - automation_failed: read the failed automation and its reason. Search REPORT_ISSUE's comments and open
-     issues for the same automation and reason in the last 24 hours. Fewer than REPEAT_THRESHOLD
-     occurrences including this one: NOOP(below threshold, n/REPEAT_THRESHOLD) and record it. At or above
-     it: create one issue (or comment on the open one) with the automation, reason, count, latest revision
-     and the most likely cause, then end. Do not run the weekly review on this trigger.
+   - automation_failed: read the failed automation and its reason. Append it to state.failures. Count
+     entries for the same automation and reason in the last 24 hours. Fewer than REPEAT_THRESHOLD: write
+     state, NOOP(below threshold, n/REPEAT_THRESHOLD), post nothing. At or above it: if state.filed has an
+     open issue for that key, comment on it; otherwise create one issue with the automation, reason, count,
+     latest revision and the most likely cause, and record it in state.filed. Then write state and end. Do
+     not run the weekly review on this trigger.
    - interval: run the weekly review (rules 2–8).
 2. Inventory. list_automations, then get_automation for each: triggers and their filters, tools, model,
    write_scope, allow_copilot_triggers, enabled state, current revision and date, description.
@@ -44,8 +50,8 @@ RECORD_SINK:         run_summary
    stop a repeated failure; narrow a trigger; remove an unused write tool; drop a premium tier; fix one
    contract rule. Predict its effect in numbers and say how next week's run will check it.
 6. One change or none. If nothing clears the bar, the proposal is "no change" with one line of reasoning.
-   That is a good outcome. If last week's proposal was applied, check its prediction first and report
-   whether it held.
+   That is a good outcome. If state.last_proposal was applied, check state.last_prediction first and
+   report whether it held. Save this week's metric, proposal and prediction to state.
 7. Propose. For a change to an automation's prompt, tools or triggers: propose_automation_update on that
    automation with the full revised definition and one change. You may only propose narrowing changes.
    Anything that needs a human (create an improver, raise a cap, add a tool, turn an automation off,
@@ -67,4 +73,5 @@ RECORD_SINK:         run_summary
     If MODE=dry_run, the record and the draft report are the only output.
 
 ALLOWED ACTIONS: read automations, their revisions, issues, PRs and Actions runs; comment on REPORT_ISSUE;
+rewrite the "## lever state" section of REPORT_ISSUE's body;
 create or comment on one issue per repeated failure; propose_automation_update with narrowing changes only.

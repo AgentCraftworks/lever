@@ -1,7 +1,7 @@
 ---
 name: landing-plan
 user-invocable: false
-description: Turns a set of open PRs into a merge plan. It maps their dependencies, puts the PRs into merge-queue batches with strict order only where they overlap, and writes a hand-off with evidence for each PR. At L2 it gives the plan to the human who will merge; at L4 it enqueues the PRs itself. Use when a stack or batch of agent PRs is ready to land, when someone asks "what order should these merge in", "hand this off", "land the stack", or "why is landing taking all day", or before an owner starts merging PRs one at a time.
+description: Turns a set of open PRs into a merge plan. It maps their dependencies, puts the PRs into merge-queue batches with strict order only where they overlap, and writes a hand-off with evidence for each PR. At L2 it gives the plan to the human who will merge; at L4 it enqueues the PRs itself. It can enqueue, so it runs only on `/lever land`, a hand-off from a lever coordinator, or an explicit ask ("what order should these merge in", "land the stack", "why is landing taking all day").
 ---
 
 # Landing plan
@@ -59,7 +59,7 @@ Don't use it:
 
 | Dial | Default | Options |
 |---|---|---|
-| Autonomy level | L2 (hand-off) | L0–L5 per [`docs/autonomy.md`](../../docs/autonomy.md) and `config/autonomy.example.yml` |
+| Autonomy level | L2 (hand-off) | L0–L5 per [`docs/autonomy.md`](../../docs/autonomy.md), capped by your `.github/lever.yml` |
 | Batch size | 4 | 1 (serial) to the queue's maximum group size |
 | Ordering strictness | stacked, declared and overlapping files | also coupled surfaces · stacked only |
 | Coupled surfaces | CI workflows, migrations, lockfiles | any glob list (`--shared`) |

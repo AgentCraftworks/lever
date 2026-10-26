@@ -1,12 +1,12 @@
 ---
 name: prompt-mirror
 user-invocable: false
-description: Privately mine your own local Copilot session history and return a scorecard of how you direct agents, plus three suggestions illustrated with your own before/after messages. Use when the user asks "how am I prompting?", "coach me", "mine my sessions", "what do I keep repeating?", wants a weekly self-retro, or after a frustrating run.
+description: Mine your own local Copilot session history and return a scorecard of how you direct agents, plus three suggestions illustrated with your own before/after messages. It reads your private history, so it runs only on `/lever mirror` or an explicit ask ("how am I prompting?", "coach me", "mine my sessions", "what do I keep repeating?", a weekly self-retro).
 ---
 
 # prompt-mirror
 
-A private coach that reads only your own session history on your own machine. It separates what you typed from the far larger volume of agent, autopilot and scheduled traffic, scores how you direct agents (length, steering, polling, repeated corrections, missing done-when and stop conditions, stuck loops, fan-out), and returns three concrete suggestions using your own messages as the before. It may draft instruction or skill changes; it never applies them. Applying is [`steer-once`](../steer-once/SKILL.md)'s job.
+A coach that reads only your own session history. The extraction runs on your machine. It separates what you typed from the far larger volume of agent, autopilot and scheduled traffic, scores how you direct agents (length, steering, polling, repeated corrections, missing done-when and stop conditions, stuck loops, fan-out), and returns three concrete suggestions using your own messages as the before. It may draft instruction or skill changes; it never applies them. Applying is [`steer-once`](../steer-once/SKILL.md)'s job.
 
 ## When to use
 
@@ -18,7 +18,7 @@ Do not use it to evaluate someone else, to rank teammates, or from a cloud autom
 
 ## Privacy rules (non-negotiable defaults; each is also a dial)
 
-1. **Local only.** Read from `~/.copilot` (or `$COPILOT_HOME`); write to `~/.copilot/prompt-mirror/<date>/` with `0700`/`0600` permissions. Never upload, paste into an issue, PR, gist, chat, cloud agent or automation.
+1. **Extraction is local. Analysis goes through your model.** The script reads `~/.copilot` (or `$COPILOT_HOME`) and writes to `~/.copilot/prompt-mirror/<date>/` with `0700`/`0600` permissions, and nothing it writes is uploaded. But any redacted sample Copilot reads to score you goes to your configured model service, same as anything else in chat. So before reading message text, ask once: "Read redacted samples (they go to your model service), or numbers only?" Numbers only means `--no-text`: build the scorecard from counts, and skip the sample reads in steps 3 and 5 and the before/after quotes. Never paste history into an issue, PR, gist, cloud agent or automation.
 2. **Quote sparingly.** At most one quote per suggestion, at most 25 words, redacted, and only from the "before" side.
 3. **Never quote** messages flagged `heated` or `sensitive` (profanity, HR, performance reviews, compensation, health, legal). Use aggregate counts only.
 4. **Redact before display:** secrets and tokens, emails, URLs, home paths, `@handles`, UUIDs and long hex, plus every term in the user's `--redact-terms` file (people, codenames, internal hosts). Never show session IDs beyond an 8-character prefix, and never in anything shared.
@@ -44,7 +44,7 @@ How to tell your words from machine traffic in `events.jsonl` (`type == "user.me
 | `data.content` is `[ALL CAPS REQUEST] ...`, or "Continue from where you left off." | App-generated template or resume |
 | `data.delivery` = `idle` / `steering` / `queued` | Sent while the agent was idle, mid-turn, or queued |
 
-Also: `abort` events with `data.reason == "user_initiated"`; `session.start` → `data.context.cwd` / `repository`. Use `data.content` (what was typed), not `transformedContent` (adds injected context). Store rows need heuristics: strip injected `<system_*>`, `<skill-context>` and similar blocks, drop envelopes and templates, and drop long third-person briefs ("User request verbatim: ..."). Drop sessions whose cwd is under `/tmp` or `/var/folders`, and any 60+ character prompt whose opening recurs in 4+ sessions (eval harnesses, pasted fan-out). If the format has drifted, inspect key names on a few events (never print content) and update the filters before scoring.
+Also: `abort` events with `data.reason == "user_initiated"`; `session.start` → `data.context.cwd` / `repository`. Use `data.content` (what was typed), not `transformedContent` (adds injected context). Store rows need heuristics: strip injected `<system_*>`, `<skill-context>` and similar blocks, drop envelopes and templates, and drop long third-person briefs ("User request verbatim: ..."). Drop sessions whose cwd is under `/tmp` or `/var/folders`. A 60+ character prompt whose opening recurs in 4+ sessions is usually an eval harness or pasted fan-out, so drop it when the source is uncertain. If it's clearly you typing it (the same morning prompt every day), keep it: that's an automation candidate, not noise. If the format has drifted, inspect key names on a few events (never print content) and update the filters before scoring.
 
 ## Steps
 
@@ -53,8 +53,8 @@ Also: `abort` events with `data.reason == "user_initiated"`; `session.start` →
    ```bash
    python3 <this-skill-dir>/scripts/mine_sessions.py --since 30d [--repo owner/name] [--redact-terms ~/.config/prompt-mirror/terms.txt]
    ```
-   It writes `stats.json`, `messages.jsonl` and `messages.csv` (redacted text, flags, correction classes). Use `--no-text` for numbers only. If an agent tool can query the session store directly, apply the same filters.
-3. **Sanity-check the extraction before scoring.** Typed count and sessions plausible? `machine_per_typed` usually ≫ 1 for heavy agent users. Read 20 random redacted messages: if any read like an agent brief or report, tighten filters and re-run. Never score unfiltered history; you would be measuring your agents.
+   It writes `stats.json`, `messages.jsonl` and `messages.csv` (redacted text, flags, correction classes). Use `--no-text` for numbers only: no message text and no text-derived phrase stats. If an agent tool can query the session store directly, apply the same filters.
+3. **Sanity-check the extraction before scoring.** Typed count and sessions plausible? `machine_per_typed` usually ≫ 1 for heavy agent users. If the user allowed samples, read 20 random redacted messages: if any read like an agent brief or report, tighten filters and re-run. Never score unfiltered history; you would be measuring your agents.
 4. **Build the scorecard** from `stats.json`, compared with the previous run if one exists:
 
    | Metric | Field | Healthy direction |
@@ -67,8 +67,9 @@ Also: `abort` events with `data.reason == "user_initiated"`; `session.start` →
    | Kickoffs missing a stop condition | `100 − kickoffs.has_stop_condition_pct` | Down |
    | Stuck without measurement (loop smells) | `loop_smells`, `rates.stuck` vs `rates.measurement` | Fewer sessions |
    | Fan-out share | `rates.fanout`, `kickoffs.fanout_pct` | Context |
+   | Same prompt typed again and again | `automation_candidates` (rows flagged `repeated_prompt`) | Each one is an `/lever automate` candidate |
    | Agent concessions ("You're right…") | `assistant.concessions_per_100` | A concession without a durable fix predicts a repeat |
-   | Machine messages per typed message | `machine_per_typed` | Context: how much leverage each word carries |
+   | Machine messages per typed message | `machine_per_typed` | Context: how much work follows each message |
 
 5. **Validate each headline signal by reading.** The classifiers are regexes. For every metric you will cite, open at least 5 flagged messages and discard false positives; report the corrected number and say it was hand-checked.
 6. **Pick three suggestions,** ranked by frequency × cost (time lost, sessions affected). Each one has:
@@ -89,6 +90,7 @@ Also: `abort` events with `data.reason == "user_initiated"`; `session.start` →
 | Scope | all local sessions | `--repo` substring |
 | Redaction | strict + user term file | strict; `--keep-heated` / `--keep-sensitive` for the user's eyes only |
 | Quoting | ≤1 quote per suggestion, ≤25 words | counts only (`--no-text`) |
+| Text sent to the model | ask once before reading samples | numbers only (`--no-text`); redacted samples |
 | Tone | direct, specific, no scolding | gentle; blunt |
 | Output | report + drafted diffs | report only |
 | Comparison | your own trend only | none; opt-in anonymous team aggregate (counts only, never text) |

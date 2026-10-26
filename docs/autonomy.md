@@ -30,13 +30,17 @@ Plain words are translated into a YAML change, shown to you, and written after o
 
 ## How the level is resolved
 
-Three layers. The lowest one wins.
+One rule:
 
-1. **You.** Your dial for this repo (and path), else your default. A run can ask for a different level in its own words, and a live message from you can raise or lower it at any time.
-2. **The repo.** `.github/lever.yml` ([example](../config/autonomy.example.yml)) is the team's layer: a `default` for people with no dial, a `max` no personal dial can exceed, per-path caps, standing class grants and a freeze switch. It changes by PR, never from a chat.
-3. **GitHub.** Rulesets, branch protection, required approvals, CODEOWNERS and the merge queue, read live and never hard-coded. If required approvals or code-owner review can't be satisfied by the agent's identity, the ceiling is L2. With a merge queue, L4 means "enqueue".
+- **Requested** = your latest explicit statement: your dial file (this repo and path, else your default), the kickoff ("then merge", "hand off") or a chat message, whichever is newest. If you never said anything, it's the repo's `default`, else L2.
+- **Effective** = min(requested, the repo's `.github/lever.yml` caps, what GitHub enforces).
 
-Automations have no "you" layer. They use `autonomy: L0..L5` in their PARAMETERS block, start paused at L0, and are still capped by the repo and GitHub.
+The two caps:
+
+1. **The repo.** `.github/lever.yml` ([example](../config/autonomy.example.yml)) is the team's layer: a `default` for people with no dial, a `max` no personal dial can exceed, per-path caps, standing class grants and a freeze switch. It changes by PR, never from a chat. Class grants go through the same min: they never raise your dial.
+2. **GitHub.** Rulesets, branch protection, required approvals, CODEOWNERS and the merge queue, read live and never hard-coded. If required approvals or code-owner review can't be satisfied by the agent's identity, the ceiling is L2. With a merge queue, L4 means "enqueue".
+
+Automations have no "you" layer. Only `autonomy: L0..L5` in their PARAMETERS block counts, and comments never raise it. A new automation starts at the level its recipe states, never above the repo default, and it's still capped by the repo and GitHub.
 
 If nothing says who lands the work, the agent asks once: "Who lands this: me (hand-off), you when green, or you plus release?" It skips the question if the prompt already answered ("then merge", "hand off to the owning team"), and offers to save your answer as your dial.
 
