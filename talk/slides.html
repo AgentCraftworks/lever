@@ -54,7 +54,7 @@ body.cues #ct,body.notes #ct{display:block}
 h2{font-weight:400;font-size:64px;line-height:1.05;letter-spacing:-.035em;margin:0}
 .sub{font-size:40px;letter-spacing:-.02em;color:var(--mut);margin:18px 0 0;line-height:1.2}
 .tag{display:inline-block;font:400 24px 'Monaspace Neon';padding:5px 14px 7px;background:var(--c)}
-.foot{position:absolute;left:150px;bottom:70px;font:400 22px 'Monaspace Neon';color:var(--mut)}
+.foot{position:absolute;left:150px;bottom:70px;font:400 30px 'Monaspace Neon';color:var(--sl)}
 .sticker{display:inline-block;font-size:30px;letter-spacing:-.01em;padding:10px 20px 12px;background:var(--pk);transform:rotate(-3deg);opacity:0}
 .sticker.on{animation:pop .5s cubic-bezier(.2,.7,.2,1) both}
 .strike{text-decoration:line-through;text-decoration-thickness:3px;color:var(--mut)}
@@ -222,11 +222,12 @@ h2{font-weight:400;font-size:64px;line-height:1.05;letter-spacing:-.035em;margin
 #s18 .dl h3{margin:0;font-weight:400;font-size:46px;letter-spacing:-.025em}
 #s18 .dl h3 span{color:var(--mut)}
 #s18 .track{display:grid;margin-top:60px;gap:6px}
-#s18 .track b{display:flex;flex-direction:column;justify-content:flex-end;height:110px;padding:14px 16px;font-weight:400;background:var(--t2);font-size:22px;color:var(--sl);transition:background .4s}
-#s18 .track b em{font:400 30px 'Monaspace Neon';font-style:normal;color:#000;margin-bottom:6px}
-#s18 .track b.lit{background:var(--c)}
-#s18 .pin{position:absolute;font-size:26px;line-height:1.25;padding-top:26px;border-left:3px solid #000;padding-left:14px}
-#s18 .ceil{position:absolute;left:42px;right:42px;bottom:42px;font:400 22px 'Monaspace Neon';color:var(--mut);border-top:2px dashed var(--gy);padding-top:14px}
+#s18 .track b{display:flex;flex-direction:column;justify-content:space-between;height:150px;padding:18px 16px;font-weight:400;background:var(--t2);font-size:24px;line-height:1.15;color:var(--sl);white-space:nowrap;transition:background .4s}
+#s18 #s18s b{justify-content:center}
+#s18 .track b em{font:400 34px 'Monaspace Neon';font-style:normal;color:#000}
+#s18 .track b.lit{background:var(--c);color:#000}
+#s18 .pin{position:absolute;font-size:30px;line-height:1.25;padding-top:26px;border-left:3px solid #000;padding-left:14px}
+#s18 .ceil{position:absolute;left:42px;right:42px;bottom:42px;font:400 26px 'Monaspace Neon';color:var(--sl);border-top:2px dashed var(--gy);padding-top:14px}
 #s18 .stat{margin-top:60px;font-size:30px;line-height:1.3;color:var(--sl)}
 #s18 .stat b{display:block;font-weight:400;font-size:84px;letter-spacing:-.04em;color:#000;line-height:1.05}
 
@@ -256,7 +257,9 @@ h2{font-weight:400;font-size:64px;line-height:1.05;letter-spacing:-.035em;margin
 
 /* s22 */
 #s22 .btext h1{font-size:120px}
-#s22 .out{position:absolute;left:150px;bottom:70px;font:400 26px 'Monaspace Neon';color:var(--mut)}
+#s22 .qr22{position:absolute;left:150px;bottom:48px;display:flex;align-items:center;gap:28px}
+#s22 .qr22 .box{width:140px;height:140px}
+#s22 .qr22 p{margin:0;font:400 34px 'Monaspace Neon';color:#000}
 #s22 .back{position:absolute;right:150px;bottom:62px;font-size:40px;letter-spacing:-.02em}
 
 </style>
@@ -317,7 +320,7 @@ h2{font-weight:400;font-size:64px;line-height:1.05;letter-spacing:-.035em;margin
   <div class="card lc rise" style="--i:2">
     <div class="r"><span class="k">Outcome</span><span data-t="PRs go green faster"></span></div>
     <div class="r"><span class="k">Metric</span><span data-t="push → all green · p50 and p90"></span></div>
-    <div class="r"><span class="k">Instrument</span><span data-t="the critical-path job. Only the slowest one matters."></span></div>
+    <div class="r"><span class="k">Instrument</span><span data-t="the chain of jobs holding up all-green"></span></div>
     <div class="r"><span class="k">Noise floor</span><span data-t="CI is very noisy. Paired runs, same commit."></span></div>
     <div class="r" id="s6keep"><span class="k">Keep bar</span><span><span class="v1" data-t="any improvement"></span><span class="v2">≥ 1 min on the critical path</span></span></div>
   </div>
@@ -350,7 +353,7 @@ h2{font-weight:400;font-size:64px;line-height:1.05;letter-spacing:-.035em;margin
   <div class="big rise" style="--i:0">~1.5 days</div>
   <div class="cols">
     <div class="kv rise" style="--i:1">
-      <b>−34 to −43%</b><span>time to green, median</span>
+      <b>−43% · −34%</b><span>time to green, median · app · runtime</span>
       <b>roughly halved</b><span>the slow tail (p90)</span>
     </div>
     <div class="rise" style="--i:2">
@@ -419,7 +422,7 @@ h2{font-weight:400;font-size:64px;line-height:1.05;letter-spacing:-.035em;margin
       <div class="card q rise" style="--i:1"><small>Cornelius · caps his</small>there's now a new merge conflict, rebase again and <mark>PUSH IMMEDIATELY</mark> then go verify</div>
       <div class="card q step" data-s="1"><small>Cornelius, again</small>so which bit about push immediately THEN verify locally did you not understand</div>
     </div>
-    <div class="rule step" data-s="2"><small>He said it once. The agent rewrote its own rules:</small><p>Push immediately. Then verify.</p></div>
+    <div class="rule step" data-s="2"><small>Second time, the agent rewrote its own rules:</small><p>Push immediately. Then verify.</p></div>
     <div class="card q step" data-s="3"><small>Cornelius</small>I'm curious why did you stop the schedule</div>
     <div class="rule step" data-s="4"><small>One message later:</small><p>Stop only when a human says so.</p></div>
   </div>
@@ -439,10 +442,10 @@ h2{font-weight:400;font-size:64px;line-height:1.05;letter-spacing:-.035em;margin
   <div class="cards">
     <div class="card cd rise" style="--i:1;--c:var(--gl);--k:var(--gd)"><div class="hd">/lever loop</div><p>where(<em>you decide what "better" means</em> before any code changes)</p></div>
     <div class="card cd rise" style="--i:2;--c:var(--vi);--k:#7a4fd6"><div class="hd">/lever arms</div><p>where(<em>every idea gets its own agent</em> and its own measurement)</p></div>
-    <div class="card cd rise" style="--i:3;--c:var(--ol);--k:#8a7406"><div class="hd">/lever refactor</div><p>where(<em>three lanes split a giant crate</em> while you sleep)</p></div>
-    <div class="card cd rise" style="--i:4;--c:var(--bl);--k:#0e6cc4"><div class="hd" style="color:#fff">/lever review</div><p>where(<em>more than one model</em> reads every PR)</p></div>
+    <div class="card cd rise" style="--i:3;--c:var(--ol);--k:#8a7406"><div class="hd">/lever refactor</div><p>where(<em>three lanes split a giant crate</em> and you hit merge)</p></div>
+    <div class="card cd rise" style="--i:4;--c:var(--bl);--k:#0e6cc4"><div class="hd" style="color:#fff">/lever review</div><p>where(<em>several models review blind</em> and you see what they agree on)</p></div>
     <div class="card cd rise" style="--i:5;--c:var(--or);--k:var(--ord)"><div class="hd">/lever shepherd</div><p>where(<em>your stack stays green</em> until it lands)</p></div>
-    <div class="card cd rise" style="--i:6;--c:var(--pk);--k:#c22aa9"><div class="hd">/lever brief</div><p>where(<em>twelve words become a plan</em> an agent can run without you)</p></div>
+    <div class="card cd rise" style="--i:6;--c:var(--pk);--k:#c22aa9"><div class="hd">/lever brief</div><p>where(<em>one sentence becomes a plan</em> an agent can run without you)</p></div>
   </div>
 </section>
 
@@ -452,18 +455,18 @@ h2{font-weight:400;font-size:64px;line-height:1.05;letter-spacing:-.035em;margin
     <div class="card dl rise" style="--i:1">
       <h3>Autonomy <span>· who merges</span></h3>
       <div class="track" id="s18a" style="grid-template-columns:repeat(6,1fr)">
-        <b><em>L0</em>propose</b><b><em>L1</em>draft PR</b><b><em>L2</em>ready, you land</b><b><em>L3</em>merge on grant</b><b><em>L4</em>self-merge</b><b><em>L5</em>land + release</b>
+        <b><em>L0</em>propose</b><b><em>L1</em>draft PR</b><b><em>L2</em>you land</b><b><em>L3</em>on grant</b><b><em>L4</em>it lands</b><b><em>L5</em>+ release</b>
       </div>
-      <div class="pin step" data-s="1" style="left:calc(42px + 2*(100% - 84px + 6px)/6);top:300px">Cornelius<br><span class="m">he merges</span></div>
-      <div class="pin step" data-s="2" style="left:calc(42px + 4*(100% - 84px + 6px)/6);top:300px">my side projects<br><span class="m">it merges</span></div>
-      <div class="ceil">capped by your branch protection · saved in ~/.copilot/lever.yml</div>
+      <div class="pin step" data-s="1" style="left:calc(42px + 2*(100% - 84px + 6px)/6);top:345px">Cornelius<br><span class="m">he merges</span></div>
+      <div class="pin step" data-s="2" style="left:calc(42px + 4*(100% - 84px + 6px)/6);top:345px">my side projects<br><span class="m">it merges</span></div>
+      <div class="ceil">branch protection still wins · ~/.copilot/lever.yml</div>
     </div>
     <div class="card dl rise" style="--i:2">
-      <h3>Spend <span>· tokens you'll burn</span></h3>
+      <h3>Spend <span>· your budget</span></h3>
       <div class="track" id="s18s" style="grid-template-columns:repeat(3,1fr)">
         <b><em>lean</em></b><b class="lit" style="--c:var(--li)"><em>standard</em></b><b><em>max</em></b>
       </div>
-      <div class="stat"><b>9,000+</b>model calls over those five days.<br>99% of the input came from the prompt cache.</div>
+      <div class="stat"><b>9,000+</b>model calls in five days.<br>99% of input from cache.</div>
     </div>
   </div>
 </section>
@@ -473,7 +476,7 @@ h2{font-weight:400;font-size:64px;line-height:1.05;letter-spacing:-.035em;margin
   <div class="card ask rise" style="--i:1;margin-top:46px"><span class="chip" style="--c:var(--pk)">/lever automate</span><span class="t" id="s19ask"></span></div>
   <div class="card out rise" style="--i:2">
     <p class="ln" id="s19o1">Copilot Automation · <b>stack shepherd</b> · <span class="v act">PAUSED</span></p>
-    <p class="ln m" id="s19o2">only the tools it needs · nothing runs until you turn it on</p>
+    <p class="ln" id="s19o2">only the tools it needs · nothing runs until you turn it on</p>
     <p class="ln" id="s19o3">Dry run on 3 past events:</p>
     <div class="evs" id="s19ev">
       <div class="ev"><p>PR checks finished · all green</p><span class="v drop">NOOP</span></div>
@@ -504,7 +507,7 @@ h2{font-weight:400;font-size:64px;line-height:1.05;letter-spacing:-.035em;margin
   <div class="btext">
     <h1 class="rise" style="--i:0">Give the agents the boring stuff.<br><span class="g">Keep the fun stuff.</span></h1>
   </div>
-  <p class="out">github.com/github/lever</p>
+  <div class="qr22"><div class="box"><svg viewBox="-2 -2 33 33" width="100%" height="100%" shape-rendering="crispEdges" aria-label="QR code for github.com/github/lever" role="img"><rect x="-2" y="-2" width="33" height="33" fill="#fff"/><path d="M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM9 0h1v1h-1zM11 0h1v1h-1zM12 0h1v1h-1zM14 0h1v1h-1zM17 0h1v1h-1zM18 0h1v1h-1zM19 0h1v1h-1zM22 0h1v1h-1zM23 0h1v1h-1zM24 0h1v1h-1zM25 0h1v1h-1zM26 0h1v1h-1zM27 0h1v1h-1zM28 0h1v1h-1zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM10 1h1v1h-1zM11 1h1v1h-1zM13 1h1v1h-1zM17 1h1v1h-1zM19 1h1v1h-1zM22 1h1v1h-1zM28 1h1v1h-1zM0 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM6 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1zM12 2h1v1h-1zM15 2h1v1h-1zM18 2h1v1h-1zM22 2h1v1h-1zM24 2h1v1h-1zM25 2h1v1h-1zM26 2h1v1h-1zM28 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM6 3h1v1h-1zM10 3h1v1h-1zM11 3h1v1h-1zM13 3h1v1h-1zM16 3h1v1h-1zM18 3h1v1h-1zM19 3h1v1h-1zM20 3h1v1h-1zM22 3h1v1h-1zM24 3h1v1h-1zM25 3h1v1h-1zM26 3h1v1h-1zM28 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM10 4h1v1h-1zM13 4h1v1h-1zM16 4h1v1h-1zM19 4h1v1h-1zM22 4h1v1h-1zM24 4h1v1h-1zM25 4h1v1h-1zM26 4h1v1h-1zM28 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM10 5h1v1h-1zM12 5h1v1h-1zM14 5h1v1h-1zM15 5h1v1h-1zM16 5h1v1h-1zM17 5h1v1h-1zM18 5h1v1h-1zM19 5h1v1h-1zM20 5h1v1h-1zM22 5h1v1h-1zM28 5h1v1h-1zM0 6h1v1h-1zM1 6h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM23 6h1v1h-1zM24 6h1v1h-1zM25 6h1v1h-1zM26 6h1v1h-1zM27 6h1v1h-1zM28 6h1v1h-1zM9 7h1v1h-1zM11 7h1v1h-1zM12 7h1v1h-1zM15 7h1v1h-1zM17 7h1v1h-1zM18 7h1v1h-1zM19 7h1v1h-1zM0 8h1v1h-1zM2 8h1v1h-1zM4 8h1v1h-1zM6 8h1v1h-1zM10 8h1v1h-1zM16 8h1v1h-1zM17 8h1v1h-1zM19 8h1v1h-1zM20 8h1v1h-1zM24 8h1v1h-1zM27 8h1v1h-1zM3 9h1v1h-1zM5 9h1v1h-1zM12 9h1v1h-1zM13 9h1v1h-1zM15 9h1v1h-1zM16 9h1v1h-1zM17 9h1v1h-1zM20 9h1v1h-1zM22 9h1v1h-1zM25 9h1v1h-1zM28 9h1v1h-1zM0 10h1v1h-1zM2 10h1v1h-1zM3 10h1v1h-1zM6 10h1v1h-1zM8 10h1v1h-1zM9 10h1v1h-1zM12 10h1v1h-1zM14 10h1v1h-1zM15 10h1v1h-1zM16 10h1v1h-1zM17 10h1v1h-1zM18 10h1v1h-1zM21 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM27 10h1v1h-1zM28 10h1v1h-1zM1 11h1v1h-1zM2 11h1v1h-1zM3 11h1v1h-1zM4 11h1v1h-1zM5 11h1v1h-1zM7 11h1v1h-1zM8 11h1v1h-1zM9 11h1v1h-1zM12 11h1v1h-1zM13 11h1v1h-1zM14 11h1v1h-1zM16 11h1v1h-1zM17 11h1v1h-1zM20 11h1v1h-1zM23 11h1v1h-1zM24 11h1v1h-1zM27 11h1v1h-1zM0 12h1v1h-1zM2 12h1v1h-1zM3 12h1v1h-1zM4 12h1v1h-1zM5 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM8 12h1v1h-1zM10 12h1v1h-1zM14 12h1v1h-1zM15 12h1v1h-1zM17 12h1v1h-1zM18 12h1v1h-1zM20 12h1v1h-1zM21 12h1v1h-1zM22 12h1v1h-1zM25 12h1v1h-1zM27 12h1v1h-1zM28 12h1v1h-1zM0 13h1v1h-1zM3 13h1v1h-1zM5 13h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM11 13h1v1h-1zM14 13h1v1h-1zM15 13h1v1h-1zM20 13h1v1h-1zM21 13h1v1h-1zM22 13h1v1h-1zM25 13h1v1h-1zM28 13h1v1h-1zM0 14h1v1h-1zM1 14h1v1h-1zM2 14h1v1h-1zM5 14h1v1h-1zM6 14h1v1h-1zM8 14h1v1h-1zM10 14h1v1h-1zM11 14h1v1h-1zM13 14h1v1h-1zM17 14h1v1h-1zM22 14h1v1h-1zM24 14h1v1h-1zM25 14h1v1h-1zM27 14h1v1h-1zM28 14h1v1h-1zM0 15h1v1h-1zM2 15h1v1h-1zM4 15h1v1h-1zM7 15h1v1h-1zM10 15h1v1h-1zM11 15h1v1h-1zM15 15h1v1h-1zM17 15h1v1h-1zM18 15h1v1h-1zM20 15h1v1h-1zM21 15h1v1h-1zM22 15h1v1h-1zM25 15h1v1h-1zM27 15h1v1h-1zM1 16h1v1h-1zM4 16h1v1h-1zM6 16h1v1h-1zM7 16h1v1h-1zM8 16h1v1h-1zM9 16h1v1h-1zM11 16h1v1h-1zM16 16h1v1h-1zM17 16h1v1h-1zM19 16h1v1h-1zM20 16h1v1h-1zM22 16h1v1h-1zM23 16h1v1h-1zM25 16h1v1h-1zM27 16h1v1h-1zM28 16h1v1h-1zM3 17h1v1h-1zM4 17h1v1h-1zM11 17h1v1h-1zM13 17h1v1h-1zM15 17h1v1h-1zM16 17h1v1h-1zM21 17h1v1h-1zM22 17h1v1h-1zM25 17h1v1h-1zM26 17h1v1h-1zM28 17h1v1h-1zM0 18h1v1h-1zM4 18h1v1h-1zM6 18h1v1h-1zM7 18h1v1h-1zM9 18h1v1h-1zM10 18h1v1h-1zM11 18h1v1h-1zM12 18h1v1h-1zM14 18h1v1h-1zM15 18h1v1h-1zM16 18h1v1h-1zM21 18h1v1h-1zM23 18h1v1h-1zM24 18h1v1h-1zM27 18h1v1h-1zM28 18h1v1h-1zM1 19h1v1h-1zM2 19h1v1h-1zM3 19h1v1h-1zM5 19h1v1h-1zM9 19h1v1h-1zM11 19h1v1h-1zM13 19h1v1h-1zM14 19h1v1h-1zM16 19h1v1h-1zM17 19h1v1h-1zM19 19h1v1h-1zM20 19h1v1h-1zM21 19h1v1h-1zM22 19h1v1h-1zM23 19h1v1h-1zM24 19h1v1h-1zM25 19h1v1h-1zM27 19h1v1h-1zM0 20h1v1h-1zM2 20h1v1h-1zM3 20h1v1h-1zM4 20h1v1h-1zM5 20h1v1h-1zM6 20h1v1h-1zM7 20h1v1h-1zM11 20h1v1h-1zM14 20h1v1h-1zM15 20h1v1h-1zM16 20h1v1h-1zM17 20h1v1h-1zM19 20h1v1h-1zM20 20h1v1h-1zM21 20h1v1h-1zM22 20h1v1h-1zM23 20h1v1h-1zM24 20h1v1h-1zM8 21h1v1h-1zM9 21h1v1h-1zM10 21h1v1h-1zM12 21h1v1h-1zM14 21h1v1h-1zM15 21h1v1h-1zM17 21h1v1h-1zM19 21h1v1h-1zM20 21h1v1h-1zM24 21h1v1h-1zM26 21h1v1h-1zM27 21h1v1h-1zM28 21h1v1h-1zM0 22h1v1h-1zM1 22h1v1h-1zM2 22h1v1h-1zM3 22h1v1h-1zM4 22h1v1h-1zM5 22h1v1h-1zM6 22h1v1h-1zM12 22h1v1h-1zM13 22h1v1h-1zM16 22h1v1h-1zM19 22h1v1h-1zM20 22h1v1h-1zM22 22h1v1h-1zM24 22h1v1h-1zM25 22h1v1h-1zM27 22h1v1h-1zM28 22h1v1h-1zM0 23h1v1h-1zM6 23h1v1h-1zM10 23h1v1h-1zM11 23h1v1h-1zM17 23h1v1h-1zM18 23h1v1h-1zM20 23h1v1h-1zM24 23h1v1h-1zM25 23h1v1h-1zM28 23h1v1h-1zM0 24h1v1h-1zM2 24h1v1h-1zM3 24h1v1h-1zM4 24h1v1h-1zM6 24h1v1h-1zM8 24h1v1h-1zM9 24h1v1h-1zM11 24h1v1h-1zM12 24h1v1h-1zM17 24h1v1h-1zM20 24h1v1h-1zM21 24h1v1h-1zM22 24h1v1h-1zM23 24h1v1h-1zM24 24h1v1h-1zM27 24h1v1h-1zM0 25h1v1h-1zM2 25h1v1h-1zM3 25h1v1h-1zM4 25h1v1h-1zM6 25h1v1h-1zM9 25h1v1h-1zM11 25h1v1h-1zM12 25h1v1h-1zM13 25h1v1h-1zM16 25h1v1h-1zM17 25h1v1h-1zM18 25h1v1h-1zM20 25h1v1h-1zM23 25h1v1h-1zM24 25h1v1h-1zM26 25h1v1h-1zM0 26h1v1h-1zM2 26h1v1h-1zM3 26h1v1h-1zM4 26h1v1h-1zM6 26h1v1h-1zM8 26h1v1h-1zM10 26h1v1h-1zM11 26h1v1h-1zM12 26h1v1h-1zM13 26h1v1h-1zM17 26h1v1h-1zM19 26h1v1h-1zM23 26h1v1h-1zM24 26h1v1h-1zM25 26h1v1h-1zM28 26h1v1h-1zM0 27h1v1h-1zM6 27h1v1h-1zM11 27h1v1h-1zM15 27h1v1h-1zM16 27h1v1h-1zM17 27h1v1h-1zM19 27h1v1h-1zM20 27h1v1h-1zM21 27h1v1h-1zM24 27h1v1h-1zM27 27h1v1h-1zM0 28h1v1h-1zM1 28h1v1h-1zM2 28h1v1h-1zM3 28h1v1h-1zM4 28h1v1h-1zM5 28h1v1h-1zM6 28h1v1h-1zM8 28h1v1h-1zM9 28h1v1h-1zM10 28h1v1h-1zM11 28h1v1h-1zM12 28h1v1h-1zM13 28h1v1h-1zM14 28h1v1h-1zM16 28h1v1h-1zM17 28h1v1h-1zM19 28h1v1h-1zM20 28h1v1h-1zM21 28h1v1h-1zM23 28h1v1h-1zM24 28h1v1h-1zM27 28h1v1h-1zM28 28h1v1h-1z" fill="#000"/></svg></div><p>github.com/github/lever</p></div>
   <p class="back step" data-s="1">Mario, back to you.</p>
 </section>
 
