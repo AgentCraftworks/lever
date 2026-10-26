@@ -186,3 +186,7 @@ The human's job shifts from writing code to **filling the queue, setting budgets
 ## Status
 
 Draft. Feedback welcome via issues.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
