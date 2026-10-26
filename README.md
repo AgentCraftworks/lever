@@ -1,72 +1,59 @@
 # lever
 
-**Copilot skills for building feedback loops, delegating safely, and moving repeatable work into the cloud.**
+**Feedback loops for coding agents.** A Copilot plugin.
 
-> The loop is the product. The agent is the motor.
-
-lever is a set of [agent skills](https://docs.github.com/copilot) for GitHub Copilot: the CLI, the app, and the coding agent. They weren't designed on a whiteboard. They were **mined from about a year of real sessions**: ~9.5k hand-typed prompts across ~1.8k sessions, plus CI speedups, unattended delivery, and Copilot Automations that ran in production. Each skill exists because the same lesson came up over and over in that data.
-
-The lesson behind most of them: the biggest wins came from **building a trustworthy feedback loop first** and then letting agents iterate against it. The biggest wastes came when the human *was* the loop: pasting screenshots, eyeballing frame rates, watching CI overnight, hand-editing an automation's prompt.
-
-## Quick start
+![/lever <verb> <your words>: the verb picks the playbook, the rest is you talking normally](docs/examples/try.png)
 
 ```bash
-git clone https://github.com/github/lever ~/.copilot/lever
-mkdir -p ~/.copilot/skills
-ln -s ~/.copilot/lever/skills/* ~/.copilot/skills/
-# skills link to ../../docs, templates, config and automations, so give those a home too
-for d in docs templates config automations; do ln -s ~/.copilot/lever/$d ~/.copilot/$d; done
+copilot plugin marketplace add github/lever
+copilot plugin install lever@lever
 ```
 
-Start a new Copilot session so it picks up the skills, then try one that only reads:
+In the Copilot app it's **Customize → Plugins → Add marketplace**, then `github/lever`.
+
+Start a new session and try one that only reads:
 
 ```text
 /lever loop our test suite feels slow. just the card, don't change anything
 ```
 
-You get a Loop Card: the metric, how to measure it, the noise floor and a keep bar. Nothing gets pushed, filed or merged. When you're ready for more, `/lever setup` sets your dials (start at L2: agents get PRs green, you merge).
+You get a Loop Card back: the metric, how to measure it, how noisy it is, and what counts as a win. Nothing gets pushed, filed or merged.
 
-## Where it came from
+## Why
 
-lever grew out of the [autonomous-delivery skill](https://gist.github.com/EvanBoyle/8c1a97f682d92dab8c09d0e1ea73f4a0): a coordinator that keeps parallel work moving, lands it and keeps improving how it's organized. Running that skill for weeks showed which parts really carried the weight. Those parts are now the separate skills here: the loop, the brief, the dial, the status contract, the review, and moving lanes into the cloud. [`autonomous-delivery`](skills/autonomous-delivery/) is still the top-level orchestrator that ties them together.
+Agents get really good once they can check their own work. Give one a number, a way to measure it and a bar for "better", and it'll grind on that for hours without you. Without that, you're the loop: pasting screenshots, eyeballing scroll jank, hitting rerun on CI at midnight.
 
-## Pick a mode first
+Setting up the loop is the hard part. What do you measure? How noisy is it? What's a real win and what's a lucky run? When do you stop? Most people skip it, which is fair, because it's annoying. lever asks you those questions, writes the answers down, and then lets agents iterate against it.
 
-Not everything is a loop. lever works in three [modes](docs/modes.md), and most projects move through all three:
+It comes from how some of the most AI-forward engineers at GitHub work day to day: CI speedups, a five-day crate split run from three terminals, weeks of [unattended delivery](https://gist.github.com/EvanBoyle/8c1a97f682d92dab8c09d0e1ea73f4a0), and the automations that took over the chores. We mined our own sessions for what kept working, then put most of the effort into making it one command. Same workflow, no PhD required.
 
-| Mode | When | Start with |
-|---|---|---|
-| **Build** | Something big and new, with no signal to climb yet. File issues, run independent sessions in parallel, merge, deploy, repeat. | `/lever brief` → `/lever deliver` |
-| **Loop** | Make an existing thing measurably better. | `/lever loop` → `/lever arms` |
-| **Run** | Repeatable work that should happen without you. | `/lever automate` |
+## What it looks like
 
-Two dials apply to every mode: **[autonomy](docs/autonomy.md)** (how much agents may do on their own) and **[spend](docs/spend.md)** (how many tokens and how much compute you'll pay for: `lean`, `standard` or `max`).
+![/lever routes a plain-words ask to the right verb](docs/examples/lever.png)
 
-## Lower the floor, raise the ceiling
+![/lever loop turns "it feels slow" into a Loop Card](docs/examples/loop.png)
 
-| Question | Floor: anyone, day one | Ceiling: unattended, at scale |
-|---|---|---|
-| **The task**: is this change actually better? | [`find-the-loop`](skills/find-the-loop/) | [`experiment-arms`](skills/experiment-arms/) |
-| **The work**: is delivery moving, landing, visible? | [`brief`](skills/brief/) · [`progress-contract`](skills/progress-contract/) | [`autonomous-delivery`](skills/autonomous-delivery/) · [`pr-shepherd`](skills/pr-shepherd/) · [`landing-plan`](skills/landing-plan/) · [`cross-model-review`](skills/cross-model-review/) · [`refactor-pipeline`](skills/refactor-pipeline/) |
-| **You**: are you getting better at directing agents? | [`prompt-mirror`](skills/prompt-mirror/) | [`steer-once`](skills/steer-once/) |
-| **The repo, in the cloud**: does repeatable work happen without you, and improve itself? | [`automate-it`](skills/automate-it/) | [`automations/`](automations/) · [`keep-the-pool-full`](skills/keep-the-pool-full/) · [`run-health-review`](skills/run-health-review/) |
+![/lever autonomy shows and sets your dial](docs/examples/autonomy.png)
 
-Shared by every skill:
-- **[Autonomy dial](docs/autonomy.md)** (L0 propose → L5 land, release, observe). How much an agent may do on its own is *your setting*, saved in `~/.copilot/lever.yml` and tuned with `/lever autonomy` as your trust grows. It's capped by your repo's own rules and never hard-coded.
-- **[Spend dial](docs/spend.md)** (`lean` · `standard` · `max`): model tier, parallel lanes, review depth and trigger cadence, with order-of-magnitude costs.
-- **[A `lever` issue](docs/tracking.md)**: a brief is filed as an issue assigned to you, labelled `lever`, with one sub-issue per lane. `/lever status` lists yours, needs-you first.
-- **[Loop Card](templates/loop-card.md)**: outcome, metric, instrument, noise floor, keep bar, stop rule.
-- **[Ledger](templates/ledger.md)**: every attempt is recorded, including rejects.
-- **[Status digest](templates/status-digest.md)**: `x → y (Δ%)`, ETA, evidence level, silent when nothing changed.
+More in the **[examples gallery](docs/examples.md)**: experiment arms, a brief, the three-terminal refactor, the PR shepherd, cross-model review, an automation, and the verbs that tune lever to you.
 
-## Start here
+<details><summary>Copy-pasteable examples</summary>
 
-One command: **`/lever`**. Give it a verb, or just say what's wrong and it picks the verb, tells you which, and runs it.
+```text
+/lever our CI is slow and I'm tired of hitting rerun
+/lever loop the editor feels janky when I scroll big files
+/lever arms try the 6 ideas on the card
+/lever brief add offline mode to the editor. ship it by tomorrow
+/lever refactor src/core is 400k lines. cut it in half
+/lever shepherd keep my stack green till it lands
+/lever review this PR
+/lever automate make the stack shepherd an automation for this repo
+/lever mirror last 30 days
+/lever steer push immediately, then verify
+/lever autonomy agents can merge docs PRs in this repo, nothing else
+```
 
-1. **Stuck, or iterating by feel?** `/lever loop`. It turns "it still feels slow" into a metric the agent can measure itself.
-2. **Handing off work?** `/lever brief`. It turns your 20-word ask into something an agent can run unattended, with a done-when, a budget, and an autonomy level.
-3. **Doing the same thing for the third time?** `/lever automate`. It turns it into a Copilot Automation that starts paused, uses least-privilege tools, and comes with an improver that proposes fixes for you to approve.
-4. **Want lever to fit *you*?** `/lever setup` sets your dials. `/lever mirror` reads your own session history, and `/lever steer` turns your repeated corrections into rules that stick.
+</details>
 
 ## Commands
 
@@ -102,90 +89,45 @@ YOU     tune lever to how you work
 
 Each verb is a skill in [`skills/`](skills/). The `/` menu shows only `/lever`. Skills that only read and advise, like `loop`, can still load on their own when your ask fits. Anything that pushes, files, opens PRs or schedules runs waits for `/lever <verb>` or an explicit ask.
 
-## Try it
+## Your dials
 
-![/lever <verb> <your words>: the verb picks the playbook, the rest is you talking normally](docs/examples/try.png)
+- **[Autonomy](docs/autonomy.md)**, L0 to L5: who merges. L0 only proposes. L2 gets PRs green and you merge. L5 lands, releases and watches. It's your setting, saved in `~/.copilot/lever.yml`, and your repo's branch protection still wins. Start at L2 and turn it up as you trust it.
+- **[Spend](docs/spend.md)**, `lean` · `standard` · `max`: model tier, parallel lanes, review depth and how often things run. A repo can cap it in `.github/lever.yml`.
 
-<details><summary>Copy-pasteable</summary>
+`/lever setup` asks three questions and writes both ([example](config/personal.example.yml)). For a team, copy [`config/autonomy.example.yml`](config/autonomy.example.yml) to `.github/lever.yml`.
 
-```text
-/lever our CI is slow and I'm tired of hitting rerun
-/lever loop the editor feels janky when I scroll big files
-/lever arms try the 6 ideas on the card
-/lever brief add offline mode to the editor. ship it by tomorrow
-/lever refactor src/core is 400k lines. cut it in half
-/lever shepherd keep my stack green till it lands
-/lever review this PR
-/lever automate make the stack shepherd an automation for this repo
-/lever mirror last 30 days
-/lever steer push immediately, then verify
-/lever autonomy agents can merge docs PRs in this repo, nothing else
-```
+Work lever starts is tracked as an issue assigned to you with the [`lever` label](docs/tracking.md), so `/lever status` can list everything in flight, needs-you first.
 
-</details>
+## Other ways to install
 
-![/lever routes a plain-words ask to the right verb](docs/examples/lever.png)
-
-![/lever autonomy shows and sets your dial](docs/examples/autonomy.png)
-
-More in the **[examples gallery](docs/examples.md)**: a Loop Card, experiment arms, a brief, the three-terminal refactor, the PR shepherd, cross-model review, an automation and the "You" verbs.
-
-## Install
+**Per repo**, so the Copilot coding agent in the cloud gets the skills too:
 
 ```bash
-# All skills, for your user (Copilot CLI / app)
-git clone https://github.com/github/lever ~/.copilot/lever
-mkdir -p ~/.copilot/skills
-ln -s ~/.copilot/lever/skills/* ~/.copilot/skills/
-# skills link to ../../docs, templates, config and automations, so give those a home too
-for d in docs templates config automations; do ln -s ~/.copilot/lever/$d ~/.copilot/$d; done
-
-# Or per repo: every skill (including the /lever router), plus the folders their links point at
 mkdir -p .github/skills
 cp -r path/to/lever/skills/* .github/skills/
 cp -r path/to/lever/{docs,templates,config,automations} .github/
 ```
 
-Skills link to `../../docs/...`, so `docs/`, `templates/`, `config/` and `automations/` have to sit two levels above each skill. Copy one skill on its own and its links break.
+Skills link to `../../docs/...`, so those four folders have to sit next to `skills/`.
 
-Then run `/lever setup`. It asks three questions and writes your dials to `~/.copilot/lever.yml` ([example](config/personal.example.yml)). For a team, copy [`config/autonomy.example.yml`](config/autonomy.example.yml) to `.github/lever.yml` to cap levels and set budgets for the repo.
+**Hacking on lever:** clone it and run `copilot plugin marketplace add ./lever`, then `copilot plugin install lever@lever`. It loads straight from your checkout, so edits show up in your next session.
 
-Automation recipes in [`automations/`](automations/) are installed through the GitHub MCP server (`create_automation`). Each one is created paused, dry-run on historical items, then enabled.
+**Automations:** the recipes in [`automations/`](automations/) install through the GitHub MCP server with `/lever automate`. Each one starts paused, dry-runs on past events, and only then gets turned on.
 
 ## Make it yours
 
-lever is a starting point, not a doctrine. The skills hold the patterns that kept repeating in one person's data. Yours will differ. `prompt-mirror` and `steer-once` exist so you can mine your own sessions, find your own repeated corrections, and fold them back in. Fork it and tune it.
+These skills fit how we work. Yours will be different. `/lever mirror` reads your own session history and shows you what you keep repeating, and `/lever steer` turns those repeated corrections into rules that stick. Fork it and bend it.
 
-## What the data said (a few numbers)
+## Some numbers
 
-- **Experiment arms:** 79 do-not-merge experiment PRs led to 27 kept changes across two repos. CI p50 time-to-green fell 43% in one repo and 34% in the other, in about a day and a half. Ideas that lost were kept as `[negative result]` PRs.
-- **Corrections that stick:** agents replied "You're right" 75 times and kept making the same mistakes. Turning ~200 of those corrections into a skill cut repeat nudges from 27 to 0 and invented-approval language from 31% to 3%.
-- **Loops beat eyeballs:** pasted screenshots fell from ~49 a month to ~0 once agents could run the instrument themselves.
-- **Automations:** one morning-status prompt was typed by hand 28 days in a row before it became an automation. Review automations had 46–49 tools; about 8 were needed.
-- **The human's share:** in unattended weeks, the human typed roughly 3–5% of turns. The job moved to setting direction, budgets and autonomy.
-
-## What's possible
-
-Rough ranges from the data behind these skills, so you can calibrate what to aim for. These are orders of magnitude, not benchmarks.
-
-| Dimension | Pairing with an agent | With these loops in place |
-|---|---|---|
-| Unattended run length | minutes to hours | **days to weeks** |
-| Sessions one coordinator steers | 1–5 | **10s to 100s** |
-| Share of turns a human types | most | **low single-digit %** |
-| Automated review runs per day | 10s | **1,000s**, most correctly posting nothing |
-| Inline review findings per run | — | **under 1 in 10** runs (precision over recall) |
-| PR size when running unattended | 100s–1,000s of lines | **~5–10× smaller** |
-| Time to merge as volume rises | grows | **roughly halves** |
-| Cost of a per-push trigger with no draft filter | — | **~2–3× runs per PR** |
-| Cost of a premium model tier | 1× | **~10–15× per call**; make it a visible dial |
-| CI time-to-green from experiment arms | — | p50 **−43%** in one repo, **−34%** in the other, in **1–2 days** |
-
-The human's job shifts from writing code to **filling the queue, setting budgets and diagnosing stalls**. None of that needs a special system. It needs the loops in this repo, a dial you trust, and automations that improve themselves under your approval.
+- **CI:** 79 throwaway experiment PRs, 27 kept changes. Median time-to-green fell 43% in one repo and 34% in the other in about a day and a half. Ideas that lost stayed around as `[negative result]` PRs.
+- **Corrections:** agents said "You're right" 75 times and kept making the same mistakes. Turning ~200 of those corrections into a skill took repeat nudges from 27 to 0.
+- **Screenshots:** pasted screenshots went from ~49 a month to about zero once agents could run the measurement themselves.
+- **Chores:** one morning-status prompt was typed by hand 28 days in a row before it became an automation.
 
 ## Status
 
-Draft. Feedback welcome via issues.
+Early. Issues and PRs welcome.
 
 ## License
 
