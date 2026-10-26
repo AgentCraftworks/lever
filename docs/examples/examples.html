@@ -25,7 +25,7 @@ h2 span{color:var(--mut)}
 .msg{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 22px;font-size:21px;line-height:1.42}
 .you .msg{font-family:'Monaspace Neon',monospace;font-size:21px;background:#fff}
 .you .msg b{font-weight:400;background:var(--c);padding:1px 6px}
-.msg p{margin:0 0 10px}.msg p:last-child{margin:0}
+.msg p{margin:0 0 10px}.msg b.mono{font-weight:400;background:var(--c);padding:1px 6px}.msg p:last-child{margin:0}
 .msg code{font-size:.9em;background:var(--t2);padding:1px 6px;border-radius:4px}
 .kv{display:grid;grid-template-columns:190px 1fr;margin:6px 0 12px;border-top:1px solid var(--line)}
 .kv>*{padding:9px 0;border-bottom:1px solid var(--line)}
@@ -157,7 +157,13 @@ h2 span{color:var(--mut)}
       <dt>Stop if</dt><dd>it needs a schema migration, or 2 lanes are blocked at once</dd>
       <dt>Reports</dt><dd>only when something changed</dd>
     </dl>
-    <p>Starting 4 lanes: storage, sync queue, conflict UI, E2E. Go to bed.</p>
+    <p>Filed <b class="mono">#142</b>, assigned to you, label <code>lever</code>. 4 lanes as sub-issues: storage, sync queue, conflict UI, E2E.</p>
+    <p>Who runs it? <code>here</code> · <code>cloud</code> · <code>later</code></p>
+  </div></div></div>
+  <div class="turn you"><div class="av"></div><div><p class="who">you</p><div class="msg">here</div></div></div>
+  <div class="turn cp"><div class="av"></div><div><p class="who">Copilot</p><div class="msg">
+    <p>Coordinating <b class="mono">#142</b> from this session. <code>/every 30m</code> keeps it going; status goes on the issue. Go to bed.</p>
+    <p class="mut">Tomorrow, from anywhere: <code>/lever status</code>. Make it the default: <code>brief.runner: here</code>.</p>
   </div></div></div>
   <div class="ft"><span>lever · illustrative, abbreviated</span><span>github.com/github/lever</span></div>
 </article>

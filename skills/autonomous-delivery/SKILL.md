@@ -68,7 +68,7 @@ The autonomy level is resolved per [`docs/autonomy.md`](../../docs/autonomy.md).
 
 **Parallel by default.** When the user raises a new outcome mid-stream, start a new dedicated owner for it right away and keep current work moving. Don't queue independent investigations, fixes or experiments behind a release or another lane unless they really share a resource. The user should never have to say "in parallel".
 
-**Claim before you write.** Find or create a tracking issue for each outcome. Check assignees, linked PRs and active sessions before claiming. Assignment is not an atomic lock: if two owners claim the same thing, reconcile instead of starting a second writer.
+**Claim before you write.** Find or create a tracking issue for each outcome, labelled `lever` and assigned to the outcome owner, with lanes as sub-issues ([`docs/tracking.md`](../../docs/tracking.md)). Given `#issue`, resume from it: the brief, the lanes and the status section are the state. Write yourself into its marker as coordinator; if another coordinator checked in within 2 hours, stay read-only and say who's driving. Check assignees, linked PRs and active sessions before claiming. Assignment is not an atomic lock: if two owners claim the same thing, reconcile instead of starting a second writer.
 
 ### 3. Delegate with an envelope
 

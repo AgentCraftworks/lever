@@ -11,13 +11,13 @@ One command, a handful of verbs. Like any good CLI: `/lever help` lists them, `/
 /lever <what's bugging you>      not sure? describe it. lever picks the verb.
 
 BUILD   make something new
-  brief <ask>                    turn ~20 words into a brief an agent can run unattended
-  deliver [brief|issues]         run lanes in parallel and land the work
+  brief <ask>                    ~20 words → a brief on an issue, then run it here, in the cloud, or later
+  deliver [#issue]               run lanes in parallel and land the work; resumes any lever issue
   refactor <scope> <goal>        huge mechanical change: producer, packager, shepherd
   backlog                        keep enough ready issues in the pool
   shepherd [pr|stack]            keep PRs green until they land
   land [prs]                     merge plan for a stack or a batch
-  status                         progress you never have to ask for
+  status [#issue]                what lever is running for you, needs-you first
 
 LOOP    make something measurably better
   loop <problem>                 find the feedback loop first: a Loop Card
@@ -105,11 +105,18 @@ Your dial never exceeds the repo or GitHub. The repo never raises your dial. The
 
 **`/lever spend <tier>`** works the same way for `spend.tier`, per repo or default.
 
+**`brief.runner`** (`here`, `cloud` or `later`) skips the runner question at the end of `/lever brief`. Unset means ask.
+
+## Where your work lives
+
+Anything lever runs while you're not watching lives on an issue labelled `lever` and assigned to you, with lanes as sub-issues. `/lever status` lists them, `/lever deliver #N` resumes one from any session. Details: [`docs/tracking.md`](../../docs/tracking.md).
+
 ## setup
 
 First run, two minutes, three questions:
 1. "Who lands your work by default?" Choices: me (L2), the agent once it's green (L4), or ask each time. Then ask about per-repo exceptions.
 2. "Spend?" Choices: lean, standard, max (see `docs/spend.md`).
+   Don't ask about the brief runner here. The first `/lever brief` asks, and offers to save the answer.
 3. "Want a quick read on how you prompt?" If yes, run `mirror` on the last 30 days.
 
 Write `~/.copilot/lever.yml`, print it, and print `/lever help`.

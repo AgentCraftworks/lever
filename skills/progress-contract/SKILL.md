@@ -31,6 +31,12 @@ Use the weakest level that is true. Never round up.
 
 A status record counts only after you have **read it back**. Write the artifact, fetch it, then report. Key artifacts by `<lane>/<pr>/<head-sha>`, so a re-run on the same head is a no-op by construction.
 
+## `/lever status` with no args
+
+List what lever is running for the user: `is:open label:lever assignee:@me` in this repo and every repo with a dial in `~/.copilot/lever.yml`. Print `lever:needs-you` items first, each with its one question and a recommended answer. Then one line per issue: outcome, lanes done/total, weakest evidence level, last check, runner. A check older than 2 hours is flagged as stalled. Given `#issue`, print that issue's digest. See [`docs/tracking.md`](../../docs/tracking.md).
+
+When a run is tracked on an issue, the digest goes in the issue's `## Status` section, edited in place. Comment only for a milestone, a `needs-you` question (add the `lever:needs-you` label) or the final done-audit.
+
 ## Steps
 
 1. **Publish the plan at kickoff.** List 3–7 milestones with human-friendly labels, not PR numbers or SHAs. For each milestone give an ETA in the operator's timezone (`status.timezone` in `.github/lever.yml`, otherwise ask once), the evidence level that counts as done, and a confidence. If there is a deadline, add a checkpoint projection: what will be true at each checkpoint up to the deadline ("hour by hour until midnight").

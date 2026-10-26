@@ -38,7 +38,13 @@ The person with the intent should write a short sentence, and the agent should d
     - **escalate:** the one decision only a human can make.
 11. **Report contract.** Name who receives reports, the cadence, and the format, following `progress-contract` and [`templates/status-digest.md`](../../templates/status-digest.md). The default is silent unless something changed.
 12. **Fan-out ("1 of N").** When there are several workers, write N sibling briefs that share the same Ask, rules, budget and report contract. Each brief adds a line `You are 1 of N. Your slice: <area | model | hypothesis>. Siblings: <slices>.` Slices must not overlap in the files they write. When comparing arms, every arm uses the same Loop Card.
-13. **Approve or send.** In interactive mode, show the brief for one-click approval. In autopilot, send it. Store it where the worker and later agents can read it, such as the issue body, the PR description or the session.
+13. **File it.** The brief lives on a GitHub issue in the target repo, so any session can resume it ([`docs/tracking.md`](../../docs/tracking.md)). Title it with the outcome. The body is the brief, then an empty `## Status` section and the `<!-- lever: … -->` marker. **Assign it to the outcome owner** (usually the user) and label it `lever`, creating the label if it's missing. More than one lane: one sub-issue per lane with its "1 of N" brief, also labelled `lever`. Search `label:lever` first and amend an existing brief for the same outcome instead of filing a second one. No triage permission, or someone else's repo the user hasn't said to file in: keep the brief in the session and say so.
+14. **Pick the runner.** Use `brief.runner` from `~/.copilot/lever.yml` if set. Otherwise end with one choice: **here** (this session coordinates now), **cloud** (assign each lane sub-issue to Copilot) or **later** (filed, nobody runs it yet). Then:
+    - **here:** run `/lever deliver #<issue>` and keep it alive across turns: in the CLI, `/goal <done-when>` and `/every 30m /lever status #<issue>`; in the app, `/goal` and a session automation on the same cadence. Write `runner=here` and the coordinator into the marker.
+    - **cloud:** assign each lane sub-issue to Copilot. Offer `/lever automate` for a paused Copilot Automation that shepherds the resulting PRs at the resolved autonomy level.
+    - **later:** stop. Print `/lever deliver #<issue>` as the command to run when ready.
+
+    In interactive mode, show the brief once before filing. In autopilot, file it and go.
 
 ## Example (abridged)
 
@@ -74,11 +80,13 @@ The brief this produces:
 | Budget stop | Report at 80%, then finish or park | 50–100% |
 | Fan-out | 1 | N copies sliced by area, model or hypothesis |
 | Report target and cadence | Back to the delegator, on change | Hourly; milestones; daily digest; issue comment |
-| Approval | Interactive: show before sending. Autopilot: send | Always show; never show |
+| Approval | Interactive: show before filing. Autopilot: file and go | Always show; never show |
+| Where it lives | An issue assigned to the owner, label `lever`; sub-issues per lane | Session only (no issue) |
+| Runner | `brief.runner`, else ask once | here; cloud; later |
 
 ## Outputs
 
-A filled `templates/brief.md` per worker. Sibling briefs share one Ask, and each carries its own "1 of N" line. A one-line summary goes back to the user: `briefed <N> worker(s): <outcome> · done when <check> · L<n> · stop at <budget>`.
+An issue labelled `lever` and assigned to the owner, with a filled `templates/brief.md` in its body and one sub-issue per lane. Sibling briefs share one Ask, and each carries its own "1 of N" line. A one-line summary goes back to the user: `#<issue> · <N> lane(s) · <outcome> · done when <check> · L<n> · runner <here|cloud|later>`.
 
 ## This skill's own feedback loop
 

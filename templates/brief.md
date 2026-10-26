@@ -1,6 +1,6 @@
 # Brief
 
-A brief turns a short intent into work that can run unattended. `brief` produces this.
+A brief turns a short intent into work that can run unattended. `brief` produces this as the body of an issue labelled `lever` and assigned to the outcome owner (see [`docs/tracking.md`](../docs/tracking.md)).
 
 ```
 ## Ask (verbatim)
@@ -30,4 +30,9 @@ Absence window: <when the human is away; what to do meanwhile>
 ## Report contract
 Cadence: <on change / hourly / at milestones> · Format: templates/status-digest.md
 Fan-out: <1 of N, sibling briefs>
+
+## Status
+<edited in place by the coordinator; last check: <time>>
+
+<!-- lever: brief · runner=<here|cloud|later> · autonomy=<Ln> · coordinator=<who> · checked=<time> -->
 ```

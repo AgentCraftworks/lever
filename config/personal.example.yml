@@ -16,6 +16,9 @@ spend:
   repos:
     you/side-project: max
 
+brief:
+  runner: here              # here · cloud · later. Unset: /lever brief asks each time
+
 # Every change, in your own words. /lever autonomy appends here.
 history:
   - at: 2026-10-01

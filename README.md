@@ -36,6 +36,7 @@ Two dials apply to every mode: **[autonomy](docs/autonomy.md)** (how much agents
 Shared by every skill:
 - **[Autonomy dial](docs/autonomy.md)** (L0 propose → L5 land, release, observe). How much an agent may do on its own is *your setting*, saved in `~/.copilot/lever.yml` and tuned with `/lever autonomy` as your trust grows. It's capped by your repo's own rules and never hard-coded.
 - **[Spend dial](docs/spend.md)** (`lean` · `standard` · `max`): model tier, parallel lanes, review depth and trigger cadence, with order-of-magnitude costs.
+- **[A `lever` issue](docs/tracking.md)**: a brief is filed as an issue assigned to you, labelled `lever`, with one sub-issue per lane. `/lever status` lists yours, needs-you first.
 - **[Loop Card](templates/loop-card.md)**: outcome, metric, instrument, noise floor, keep bar, stop rule.
 - **[Ledger](templates/ledger.md)**: every attempt is recorded, including rejects.
 - **[Status digest](templates/status-digest.md)**: `x → y (Δ%)`, ETA, evidence level, silent when nothing changed.
