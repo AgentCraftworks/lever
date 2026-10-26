@@ -7,7 +7,7 @@ This adapter covers the case where the metric is **PR time-to-green (TTG)** on G
 - **TTG** runs from the first workflow run created for the head SHA to the completion of the last *required* check. Reruns count, because a person waiting on the PR waits through them too.
 - **Critical lane** is measured from the first run created to the last job of the slowest required lane, using attempt 1 only.
 - **Guards** are tracked alongside TTG: billed minutes per run (attempt 1, and all attempts), first-try green rate k/n, reruns per PR and rerun causes.
-- **Billed minutes** = Σ ceil(job minutes) × runner multiplier. Leave out path-filtered workflows that were triggered only by the treatment's own diff, because they inflate the treatment's cost.
+- **Billed minutes** = Σ ceil(job minutes) × runner multiplier. Leave out path-filtered workflows that were triggered only by the treatment's own diff, because they inflate the treatment's cost. A job on a runner label missing from `runner_multipliers`, or a run with no saved job snapshot, makes that run's cost *unknown*, never zero, and blocks any cost verdict until it is fixed.
 
 ## Arm mechanics
 
@@ -15,6 +15,7 @@ This adapter covers the case where the metric is **PR time-to-green (TTG)** on G
 - **Stacked PRs often get no CI**, since many workflows only fire for PRs into `main`. Open a draft validation PR into `main` at the *exact head SHA*. The checks attach to the SHA and show up on the stacked PR as well.
 - **Use a nonce, not an empty commit.** Add the same nonce line to one source file that busts the main compile cache *and* to the CI workflow file, in every arm and the control. Otherwise path filters skip lanes and the control gets warm caches the treatment can't get.
 - **Reject skipped heavy lanes.** The driver marks an arm `invalid-skipped` if any `heavy` check ended in anything other than `success`.
+- **Every required check must run.** An arm is `green` only when every check in `required` appeared and passed. A required check that never shows up keeps the arm pending until `timeout_min`, and then the arm is `invalid-missing`, never `green`. Every arm ends `green`, `red`, `invalid-skipped`, `invalid-missing` or `timeout`; only `green` counts as a measurement, and the rest count as failed attempts in `arm_stats.py`.
 - **Control the cache.** If a shared compiler cache would let the control hit `main`'s entries, force re-caching in both arms (for sccache: `SCCACHE_RECACHE=1`).
 - **Download artifacts before rerunning**, because a rerun drops them.
 - **Retargeting or restacking cancels in-flight runs**, and those show as phantom reds. Re-run them before you report anything.
@@ -46,9 +47,9 @@ Never ship these, whatever they save: widened `permissions:`, `pull_request_targ
 
 ## Scripts
 
-- [`scripts/ci_arm_driver.py`](scripts/ci_arm_driver.py) pushes all arms together each round with an identical nonce, opens draft do-not-merge PRs, polls by SHA under the rate floor, reruns failed jobs as a person would, and appends results to `arms_<tag>.jsonl`. It can resume where it left off; create `<tag>.stop` to stop after the current round.
+- [`scripts/ci_arm_driver.py`](scripts/ci_arm_driver.py) pushes all arms together each round with an identical nonce, opens draft do-not-merge PRs, polls by SHA under the rate floor, reruns failed jobs as a person would, and appends results to `arms_<tag>.jsonl`. It can resume where it left off; create `<tag>.stop` to stop. It needs git 2.38 or newer. Each run pushes to its own branches, `lever/arm-<tag>-<run id>-<arm>` by default, and only ever rewrites branches it created, with an expected-old-SHA lease on every push; it refuses to touch a branch that someone else wrote to.
 - [`scripts/ci_arm_metrics.py`](scripts/ci_arm_metrics.py) summarizes each arm's TTG, critical lane, billed minutes, first-try green rate and reruns, and writes `samples_<tag>.jsonl`.
-- [`scripts/arm_stats.py`](scripts/arm_stats.py) is metric-agnostic. It reports paired Δ vs control, wins per round, a bootstrap CI, Mann-Whitney U, the A/A noise floor, and a KEEP / DROP / INCONCLUSIVE verdict against the bar.
+- [`scripts/arm_stats.py`](scripts/arm_stats.py) is metric-agnostic. It reports paired Δ vs control, failed attempts per arm, wins per round, a bootstrap CI, Mann-Whitney U, the A/A noise floor, and a KEEP / DROP / INCONCLUSIVE verdict against the bar. A treatment that fails more rounds than the control is never kept, and fewer than 6 complete pairs (`--min-pairs`) is INCONCLUSIVE. Lower is better by default; pass `--higher-is-better` for metrics like throughput.
 
 Example config (`arms.json`):
 
@@ -67,17 +68,17 @@ Example config (`arms.json`):
   "save_jobs_for_workflows": ["/ci.yml"],
   "rounds": 3, "reruns": 2, "poll_s": 240, "timeout_min": 150,
   "rate_floor": 3000, "max_arms": 10,
-  "branch_prefix": "arm-r1-",
   "pr_title": "[measurement — do not merge] {tag} arm {arm}",
   "labels": ["do-not-merge"],
   "runner_multipliers": {"ubuntu-latest": 1, "windows-latest": 2, "macos-latest": 10}
 }
 ```
 
-Pointing `c` and `c2` at the same branch gives you an A/A pair in every round for free.
+Pointing `c` and `c2` at the same branch gives you an A/A pair in every round for free. Leave `branch_prefix` unset so each run gets its own branches; if you set it, the driver still refuses to overwrite a branch this run did not create.
 
 ```bash
 python3 scripts/ci_arm_driver.py arms.json            # one driver per arm set
 python3 scripts/ci_arm_metrics.py arms.json --lane-prefix "E2E"
-python3 scripts/arm_stats.py samples_r1.jsonl --control c --aa c2 --bar 1.0 --lower-is-better
+python3 scripts/arm_stats.py samples_r1.jsonl --control c --aa c2 --bar 1.0
+python3 scripts/arm_stats.py samples_r1.jsonl --control c --aa c2 --field billed_a1   # cost guard
 ```

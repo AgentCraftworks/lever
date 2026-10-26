@@ -404,8 +404,10 @@ def scan_store(db_path: Path, covered, since, until, repo_filter, stats):
 # ---------------------------------------------------------------- analysis
 
 def analyse(rows, stats):
-    # Drop prompts that recur verbatim across many sessions (eval harnesses,
-    # pasted fan-out prompts). They are not representative of your typing.
+    # A prompt that recurs verbatim across many sessions is either a template
+    # (eval harness, pasted fan-out prompt) or a person retyping the same ask,
+    # which is exactly what automation discovery looks for. Only uncertain-source
+    # rows are dropped; high-confidence typed rows are kept and flagged.
     sessions_by_text = defaultdict(set)
     for r in rows:
         if len(r["text"]) >= TEMPLATE_MIN_CHARS:
@@ -413,9 +415,12 @@ def analyse(rows, stats):
     templated = {k for k, v in sessions_by_text.items() if len(v) >= TEMPLATE_MIN_SESSIONS}
     kept = []
     for r in rows:
+        r["repeat_key"] = None
         if len(r["text"]) >= TEMPLATE_MIN_CHARS and norm_for_template(r["text"]) in templated:
-            stats["dropped.templated"] += 1
-            continue
+            if r["confidence"] != "high":
+                stats["dropped.templated"] += 1
+                continue
+            r["repeat_key"] = norm_for_template(r["text"])
         kept.append(r)
     kept.sort(key=lambda r: (r["session"], r["ts"]))
 
@@ -426,6 +431,8 @@ def analyse(rows, stats):
         if r["images"] or "screenshot_text" in flags:
             flags.add("screenshot")
         flags.discard("screenshot_text")
+        if r["repeat_key"]:
+            flags.add("repeated_prompt")
         r["flags"] = sorted(flags)
         r["classes"] = sorted(k for k, p in CLASS_RE.items() if p.search(t))
         r["heated"] = bool(HEATED.search(t))
@@ -437,6 +444,12 @@ STOPWORDS = set(
     "the a an to of and or is it in on for this that be are was you i me my we our "
     "your with as at by from not do don't dont just please can will would should so "
     "if then there here what why how it's its all any get got have has had".split())
+
+
+def text_withheld(r, args):
+    """Mirror of the message output: text that is withheld there never feeds aggregates."""
+    return (args.no_text or (r["sensitive"] and not args.keep_sensitive)
+            or (r["heated"] and not args.keep_heated))
 
 
 def build_stats(rows, stats, args):
@@ -488,9 +501,11 @@ def build_stats(rows, stats, args):
 
     bigram_sessions = defaultdict(set)
     for r in rows:
-        if not ({"correction", "recurrence"} & set(r["flags"])) or r["sensitive"]:
+        if not ({"correction", "recurrence"} & set(r["flags"])) or text_withheld(r, args):
             continue
-        plain = re.sub(r"\S*[/\\@]\S*|`[^`]*`", " ", r["text"].lower())
+        # Redact first (built-in rules and --redact-terms), then drop the placeholders.
+        safe = re.sub(r"@?\[[A-Z]+\]|~", " ", redact(r["text"], args.extra, sys.maxsize))
+        plain = re.sub(r"\S*[/\\@]\S*|`[^`]*`", " ", safe.lower())
         toks = [t for t in re.findall(r"[a-z][a-z'\-]+", plain) if t not in STOPWORDS]
         for a, b in set(zip(toks, toks[1:])):
             bigram_sessions[f"{a} {b}"].add(r["session"])
@@ -498,6 +513,22 @@ def build_stats(rows, stats, args):
         ({"phrase": k, "sessions": len(v)} for k, v in bigram_sessions.items()
          if len(v) >= args.min_sessions),
         key=lambda x: -x["sessions"])[:30]
+
+    # Same prompt typed in several sessions: a candidate for an automation.
+    groups = defaultdict(list)
+    for i, r in enumerate(rows):
+        if r["repeat_key"]:
+            groups[r["repeat_key"]].append((i, r))
+    candidates = []
+    for members in groups.values():
+        rs = [r for _, r in members]
+        cand = {"sessions": len({r["session"] for r in rs}), "messages": len(rs),
+                "message_ids": [i for i, _ in members],
+                "first": min(r["ts"] for r in rs).isoformat(), "last": max(r["ts"] for r in rs).isoformat()}
+        if not any(text_withheld(r, args) for r in rs):
+            cand["text"] = redact(rs[0]["text"], args.extra, args.max_chars)
+        candidates.append(cand)
+    candidates.sort(key=lambda c: (-c["sessions"], -c["messages"]))
 
     weekly = defaultdict(Counter)
     for r in rows:
@@ -557,12 +588,15 @@ def build_stats(rows, stats, args):
         },
         "correction_classes": classes,
         "repeated_correction_phrases": repeated,
+        "automation_candidates": candidates[:30],
         "loop_smells": loop_smells[:50],
         "weekly": trend,
         "notes": [
             "Regex classifiers are approximate; read samples before trusting a rate.",
             "Delivery (steering/queued/idle) exists only on newer events; store rows lack it.",
             "Medium-confidence rows come from the session store, which has no source tag.",
+            "Phrases and candidate text are redacted like messages and skip withheld rows; "
+            "--no-text leaves numbers only.",
         ],
     }
 
@@ -597,7 +631,7 @@ def main() -> int:
     args.since_dt = parse_since(args.since)
     args.until_dt = parse_since(args.until) if args.until else datetime.now(timezone.utc)
 
-    extra = []
+    extra = args.extra = []
     if args.redact_terms:
         for line in Path(os.path.expanduser(args.redact_terms)).read_text().splitlines():
             term = line.strip()
