@@ -85,6 +85,10 @@ Each verb is a skill in [`skills/`](skills/). The `/` menu shows only `/lever`. 
 
 ## Try it
 
+![/lever <verb> <your words>: the verb picks the playbook, the rest is you talking normally](docs/examples/try.png)
+
+<details><summary>Copy-pasteable</summary>
+
 ```text
 /lever our CI is slow and I'm tired of hitting rerun
 /lever loop the editor feels janky when I scroll big files
@@ -98,6 +102,8 @@ Each verb is a skill in [`skills/`](skills/). The `/` menu shows only `/lever`. 
 /lever steer push immediately, then verify
 /lever autonomy agents can merge docs PRs in this repo, nothing else
 ```
+
+</details>
 
 ![/lever routes a plain-words ask to the right verb](docs/examples/lever.png)
 

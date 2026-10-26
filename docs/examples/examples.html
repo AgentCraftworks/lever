@@ -47,9 +47,42 @@ h2 span{color:var(--mut)}
 .bars i{display:block;height:18px;background:var(--c)}
 .diff{margin:4px 0 14px;font-family:'Monaspace Neon',monospace;font-size:18px;line-height:1.5;background:var(--bg);border-radius:8px;padding:12px 16px}
 .diff span{display:block;white-space:pre}.diff .ctx{color:var(--mut)}.diff .add{background:var(--gp);color:#05601e;margin:0 -16px;padding:0 16px}
+.try{margin:6px 0 0;border-top:1px solid var(--line)}
+.try .g{font-size:14px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);font-weight:500;padding:22px 0 8px}
+.try .r{display:grid;grid-template-columns:1fr 250px;align-items:baseline;gap:20px;padding:11px 0;border-bottom:1px solid var(--line)}
+.try .l{font-family:'Monaspace Neon',monospace;font-size:19px;white-space:nowrap;line-height:1.4}
+.try .l .lv{color:var(--mut)}
+.try .l .vb{background:var(--c);padding:2px 8px;margin:0 4px}
+.try .l .ar{color:#000}
+.try .r .w{font-size:17px;color:var(--mut);line-height:1.35}
 </style>
 </head>
 <body>
+
+<!-- 0. Try it -->
+<article class="ex" id="try" style="--c:var(--li)">
+  <div class="hd"><span class="cmd">/lever &lt;verb&gt; &lt;your words&gt;</span><span class="mode">Try it</span></div>
+  <h2>The verb picks the playbook. <span>The rest is just you, talking normally.</span></h2>
+  <div class="try">
+    <div class="g">Don&#x27;t know the verb? Just say it</div>
+    <div class="r"><div class="l"><span class="lv">/lever</span> <span class="ar">our CI is slow and I&#x27;m tired of hitting rerun</span></div><div class="w">picks the verb for you</div></div>
+    <div class="g">Build · make something new</div>
+    <div class="r"><div class="l"><span class="lv">/lever</span><span class="vb" style="--c:var(--vi)">brief</span><span class="ar">add offline mode to the editor. ship it by tomorrow</span></div><div class="w">12 words in, a runnable brief out</div></div>
+    <div class="r"><div class="l"><span class="lv">/lever</span><span class="vb" style="--c:var(--vi)">refactor</span><span class="ar">src/core is 400k lines. cut it in half</span></div><div class="w">three terminals, one job each</div></div>
+    <div class="r"><div class="l"><span class="lv">/lever</span><span class="vb" style="--c:var(--vi)">shepherd</span><span class="ar">keep my stack green till it lands</span></div><div class="w">rebase, fix, rerun, repeat</div></div>
+    <div class="g">Loop · make something better</div>
+    <div class="r"><div class="l"><span class="lv">/lever</span><span class="vb" style="--c:var(--gl)">loop</span><span class="ar">the editor feels janky when I scroll big files</span></div><div class="w">how we&#x27;d know it worked</div></div>
+    <div class="r"><div class="l"><span class="lv">/lever</span><span class="vb" style="--c:var(--gl)">arms</span><span class="ar">try the 6 ideas on the card</span></div><div class="w">one agent per idea</div></div>
+    <div class="r"><div class="l"><span class="lv">/lever</span><span class="vb" style="--c:var(--gl)">review</span><span class="ar">this PR</span></div><div class="w">more than one model reads it</div></div>
+    <div class="g">Run · make it happen without you</div>
+    <div class="r"><div class="l"><span class="lv">/lever</span><span class="vb" style="--c:var(--cy)">automate</span><span class="ar">make the stack shepherd an automation for this repo</span></div><div class="w">runs on a schedule</div></div>
+    <div class="g">You · tune lever to how you work</div>
+    <div class="r"><div class="l"><span class="lv">/lever</span><span class="vb" style="--c:var(--pk)">mirror</span><span class="ar">last 30 days</span></div><div class="w">how you actually prompt</div></div>
+    <div class="r"><div class="l"><span class="lv">/lever</span><span class="vb" style="--c:var(--pk)">steer</span><span class="ar">push immediately, then verify</span></div><div class="w">one correction, remembered</div></div>
+    <div class="r"><div class="l"><span class="lv">/lever</span><span class="vb" style="--c:var(--pk)">autonomy</span><span class="ar">agents can merge docs PRs in this repo, nothing else</span></div><div class="w">your dial, saved</div></div>
+  </div>
+  <div class="ft"><span>lever · all verbs: /lever help</span><span>github.com/github/lever</span></div>
+</article>
 
 <!-- 1. /lever -->
 <article class="ex" id="lever" style="--c:var(--li)">

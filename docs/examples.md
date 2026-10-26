@@ -6,6 +6,8 @@ Everything is `/lever <verb> <your ask>`. Don't know the verb? `/lever <your ask
 
 ## Front door
 
+![/lever <verb> <your words>](examples/try.png)
+
 ![/lever](examples/lever.png)
 
 ## Loop: make an existing thing measurably better
