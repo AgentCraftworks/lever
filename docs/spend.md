@@ -1,10 +1,10 @@
 # Spend dial
 
-How many tokens and how much compute you are willing to spend is a choice, like autonomy. A lean setup can still close loops. A max setup buys parallelism and judgment, not correctness for free.
+How many tokens and how much compute you are willing to spend is a choice, like autonomy. The tiers use the same names as Copilot Fusion: `standard`, `high` and `max`. A `standard` setup can still close loops. A `max` setup buys parallelism and judgment, not correctness for free.
 
-| | `lean` | `standard` (default) | `max` |
+| | `standard` | `high` (default) | `max` |
 |---|---|---|---|
-| Model tier | Standard everywhere | Premium only for judgment: diagnosis, planning, risky review | Premium by default |
+| Model tier | Fusion Standard or standard models everywhere | Fusion High or a premium model, only for judgment: diagnosis, planning, risky review | Fusion Max or a premium model by default |
 | Parallel lanes | 1–2 | 3–5 | 5–20+ |
 | Review | On request | One reviewer per PR, on events | Multi-model panel on risky diffs, re-review on push |
 | Paired runs per arm | 6 (fewer arms, not fewer runs) | 6–8 | 6–12 |
@@ -27,7 +27,7 @@ Costs multiply. Estimate before you pick:
 - **Save on routine:** classification, labeling, digests, no-op checks. A run that correctly does nothing should cost almost nothing.
 - **Measure value per spend:** report useful outputs per dollar, or for a CI loop, Actions minutes spent per minute saved. Raise spend where that ratio is good, and cut it where it isn't.
 
-Below 6 complete pairs, `experiment-arms` says INCONCLUSIVE, whatever the tier. Lean buys fewer arms, not weaker evidence.
+Below 6 complete pairs, `experiment-arms` says INCONCLUSIVE, whatever the tier. `standard` buys fewer arms, not weaker evidence.
 
 ## Setting it
 
@@ -35,7 +35,7 @@ Your tier is personal, like your autonomy dial. It lives in `~/.copilot/lever.ym
 
 ```yaml
 spend:
-  tier: standard            # lean | standard | max
+  tier: high                # standard | high | max
   repos:
     you/side-project: max
 ```
@@ -44,7 +44,7 @@ The repo caps it. `.github/lever.yml` ([example](../config/autonomy.example.yml)
 
 ```yaml
 spend:
-  tier: standard            # default for people with no dial
+  tier: high                # default for people with no dial
   premium_for: [diagnosis, planning, risky_review]
   daily_cap_usd: 50         # hard stop
 budgets:

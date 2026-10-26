@@ -32,7 +32,7 @@ YOU     tune lever to how you work
   mirror [30d]                   a scorecard of how you prompt, from your sessions
   steer <correction>             say it once, never again
   autonomy [L0-L5|<words>]       who merges. see or set your dial
-  spend [lean|standard|max]      how much model to throw at it
+  spend [standard|high|max]      how much model to throw at it
   setup                          first run: set your dials
   help [verb]                    this list, or one verb in detail
 ```
@@ -114,7 +114,7 @@ Anything lever runs while you're not watching lives on an issue labelled `lever`
 
 First run, two minutes, three questions:
 1. "Who lands your work by default?" Choices: me (L2), the agent once it's green (L4), or ask each time. Then ask about per-repo exceptions.
-2. "Spend?" Choices: lean, standard, max (see `docs/spend.md`).
+2. "Spend?" Choices: standard, high, max (see `docs/spend.md`).
    Don't ask about the brief runner here. The first `/lever brief` asks, and offers to save the answer.
 3. "Want a quick read on how you prompt?" If yes, run `mirror` on the last 30 days.
 

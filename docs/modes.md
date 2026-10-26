@@ -42,4 +42,4 @@ Skills: `automate-it`, `run-health-review`, `automations/`.
 - **Loop → Run:** once a loop has worked by hand a few times, move it to the cloud so it runs on every change or every night.
 - **Run → Build:** standing lanes file issues, and those issues feed the next build.
 
-Choose the [spend](spend.md) and [autonomy](autonomy.md) dials per mode. A prototype build might run L4 at `max` spend, while a standing review lane runs L1 at `lean`.
+Choose the [spend](spend.md) and [autonomy](autonomy.md) dials per mode. A prototype build might run L4 at `max` spend, while a standing review lane runs L1 at `standard`.

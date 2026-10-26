@@ -16,7 +16,7 @@ autonomy:
     - your-github-login
 
 spend:
-  tier: standard            # for people with no personal tier. lean | standard | max (see docs/spend.md)
+  tier: high                # for people with no personal tier. standard | high | max (see docs/spend.md)
   premium_for: [diagnosis, planning, risky_review]
   daily_cap_usd: null       # hard stop when set. null = no cap, so unattended runs need budgets: below
 

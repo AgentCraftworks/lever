@@ -12,7 +12,7 @@ autonomy:
         "docs/**": L4       # docs PRs land themselves, nothing else does
 
 spend:
-  tier: standard            # lean | standard | max (see docs/spend.md)
+  tier: high                # standard | high | max (see docs/spend.md)
   repos:
     you/side-project: max
 

@@ -82,7 +82,7 @@ YOU     tune lever to how you work
   mirror [30d]                   a scorecard of how you prompt, from your sessions
   steer <correction>             say it once, never again
   autonomy [L0-L5|<words>]       who merges. see or set your dial
-  spend [lean|standard|max]      how much model to throw at it
+  spend [standard|high|max]      how much model to throw at it
   setup                          first run: set your dials
   help [verb]                    this list, or one verb in detail
 ```
@@ -92,7 +92,7 @@ Each verb is a skill in [`skills/`](skills/). The `/` menu shows only `/lever`. 
 ## Your dials
 
 - **[Autonomy](docs/autonomy.md)**, L0 to L5: who merges. L0 only proposes. L2 gets PRs green and you merge. L5 lands, releases and watches. It's your setting, saved in `~/.copilot/lever.yml`, and your repo's branch protection still wins. Start at L2 and turn it up as you trust it.
-- **[Spend](docs/spend.md)**, `lean` · `standard` · `max`: model tier, parallel lanes, review depth and how often things run. A repo can cap it in `.github/lever.yml`.
+- **[Spend](docs/spend.md)**, `standard` · `high` · `max`: model tier, parallel lanes, review depth and how often things run. A repo can cap it in `.github/lever.yml`.
 
 `/lever setup` asks three questions and writes both ([example](config/personal.example.yml)). For a team, copy [`config/autonomy.example.yml`](config/autonomy.example.yml) to `.github/lever.yml`.
 
