@@ -112,7 +112,7 @@ Skills link to `../../docs/...`, so those four folders have to sit next to `skil
 
 **Hacking on lever:** clone it and run `copilot plugin marketplace add ./lever`, then `copilot plugin install lever@lever`. It loads straight from your checkout, so edits show up in your next session.
 
-**Automations:** the recipes in [`automations/`](automations/) install through the GitHub MCP server with `/lever automate`. Each one starts paused, dry-runs on past events, and only then gets turned on.
+**Automations:** the recipes in [`automations/`](automations/) install through the GitHub MCP server with `/lever automate`. Each one starts paused, dry-runs on past events, and only then gets turned on. The Copilot app has the automation tools built in; in Copilot CLI, start with `copilot --enable-all-github-mcp-tools`.
 
 ## Make it yours
 
