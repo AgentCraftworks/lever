@@ -1,0 +1,37 @@
+name: ACW-pr-readiness
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+      - ready_for_review
+  pull_request_review:
+    types:
+      - submitted
+      - edited
+      - dismissed
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  security-events: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{
+    github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  ACW-pr-readiness:
+    uses: AgentCraftworks/.github/.github/workflows/acw-pr-readiness-reusable.yml@7b9161fc46669fba0c6220cd976995968aca704e
+    with:
+      pull_number: ${{ github.event.pull_request.number }}
+      trigger_action: ${{ github.event.action }}
+      required_human_reviewer: ${{ vars.ACW_REQUIRED_HUMAN_REVIEWER }}
+      enforced_base_branches: staging,main
+      request_copilot_review: true
+      copilot_reviewer_candidates: copilot,github-copilot[bot]
+      escalation_label: needs-human-decision
+    secrets:
+      GH_APP_ID: ${{ secrets.AGENTCRAFTWORKS_APP_ID }}
+      GH_APP_PRIVATE_KEY: ${{ secrets.AGENTCRAFTWORKS_APP_PRIVATE_KEY }}
