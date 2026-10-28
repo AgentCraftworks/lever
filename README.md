@@ -118,13 +118,6 @@ Skills link to `../../docs/...`, so those four folders have to sit next to `skil
 
 These skills fit how we work. Yours will be different. `/lever mirror` reads your own session history and shows you what you keep repeating, and `/lever steer` turns those repeated corrections into rules that stick. Fork it and bend it.
 
-## Some numbers
-
-- **CI:** 79 throwaway experiment PRs, 27 kept changes. Median time-to-green fell 43% in one repo and 34% in the other in about a day and a half. Ideas that lost stayed around as `[negative result]` PRs.
-- **Corrections:** agents said "You're right" 75 times and kept making the same mistakes. Turning ~200 of those corrections into a skill took repeat nudges from 27 to 0.
-- **Screenshots:** pasted screenshots went from ~49 a month to about zero once agents could run the measurement themselves.
-- **Chores:** one morning-status prompt was typed by hand 28 days in a row before it became an automation.
-
 ## Status
 
 Early. Issues and PRs welcome.
